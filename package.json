@@ -1,0 +1,20 @@
+{
+  "name": "pi-extensions",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Private meta package for Pi extension authoring resources.",
+  "keywords": [
+    "pi-package"
+  ],
+  "files": [
+    "skills",
+    "template",
+    "copier.yml",
+    "README.md"
+  ],
+  "pi": {
+    "skills": [
+      "./skills"
+    ]
+  }
+}

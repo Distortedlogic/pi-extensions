@@ -1,19 +1,14 @@
 {
-  "compilerOptions": {
-    "allowImportingTsExtensions": true,
-    "erasableSyntaxOnly": true,
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "noEmit": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "target": "ES2024",
-    "types": [
-      "node"
-    ]
-  },
-  "include": [
-    "src/**/*.ts",
-    "test/**/*.ts"
-  ]
+	"compilerOptions": {
+		"allowImportingTsExtensions": true,
+		"erasableSyntaxOnly": true,
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
+		"noEmit": true,
+		"skipLibCheck": true,
+		"strict": true,
+		"target": "ES2024",
+		"types": ["node"]
+	},
+	"include": [".forgejo/**/*.ts", "src/**/*.ts", "test/**/*.ts"]
 }

@@ -92,7 +92,7 @@ repos:
         language: system
         pass_filenames: false
         types: [text]
-        files: '^(?:package(?:-lock)?\.json|tsconfig\.json|src/.*\.(?:cjs|cts|js|jsx|mjs|mts|ts|tsx)|test/.*\.(?:cjs|cts|js|jsx|mjs|mts|ts|tsx))$'
+        files: '^(?:\.forgejo/.*\.ts|package(?:-lock)?\.json|tsconfig\.json|src/.*\.(?:cjs|cts|js|jsx|mjs|mts|ts|tsx)|test/.*\.(?:cjs|cts|js|jsx|mjs|mts|ts|tsx))$'
         stages: [pre-push]
       - id: npm-test
         name: npm test
@@ -100,7 +100,7 @@ repos:
         language: system
         pass_filenames: false
         types: [text]
-        files: '^(?:package(?:-lock)?\.json|src/.*\.(?:cjs|cts|js|jsx|mjs|mts|ts|tsx)|test/.*\.(?:cjs|cts|js|jsx|mjs|mts|ts|tsx))$'
+        files: '^(?:\.forgejo/.*\.ts|package(?:-lock)?\.json|src/.*\.(?:cjs|cts|js|jsx|mjs|mts|ts|tsx)|test/.*\.(?:cjs|cts|js|jsx|mjs|mts|ts|tsx))$'
         stages: [pre-push]
       - id: pytest
         name: pytest

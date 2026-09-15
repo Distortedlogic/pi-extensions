@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
-import { fileURLToPath } from "node:url";
 import { resolve } from "node:path";
-import { promisify } from "node:util";
 import test from "node:test";
+import { fileURLToPath } from "node:url";
+import { promisify } from "node:util";
 
 const execFileAsync = promisify(execFile);
 const projectDirectory = fileURLToPath(new URL("..", import.meta.url));

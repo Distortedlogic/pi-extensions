@@ -1,27 +1,27 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://distortedlogic.net/schemas/context-preload.schema.json",
-  "title": "Pi context preload configuration",
-  "type": "object",
-  "additionalProperties": false,
-  "properties": {
-    "extends": {
-      "$ref": "#/$defs/stringList"
-    },
-    "files": {
-      "$ref": "#/$defs/stringList"
-    },
-    "contexts": {
-      "$ref": "#/$defs/stringList"
-    }
-  },
-  "$defs": {
-    "stringList": {
-      "type": "array",
-      "items": {
-        "type": "string",
-        "minLength": 1
-      }
-    }
-  }
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "https://distortedlogic.net/schemas/context-preload.schema.json",
+	"title": "Pi context preload configuration",
+	"type": "object",
+	"additionalProperties": false,
+	"properties": {
+		"extends": {
+			"$ref": "#/$defs/stringList"
+		},
+		"files": {
+			"$ref": "#/$defs/stringList"
+		},
+		"contexts": {
+			"$ref": "#/$defs/stringList"
+		}
+	},
+	"$defs": {
+		"stringList": {
+			"type": "array",
+			"items": {
+				"type": "string",
+				"minLength": 1
+			}
+		}
+	}
 }

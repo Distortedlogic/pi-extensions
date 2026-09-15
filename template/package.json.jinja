@@ -1,38 +1,42 @@
 {
-  "name": "{{ project_name }}",
-  "version": "0.1.0",
-  "private": true,
-  "description": "{{ project_description }}",
-  "type": "module",
-  "keywords": [
-    "pi-package"
-  ],
-  "engines": {
-    "node": ">=22.19.0"
-  },
-  "scripts": {
-    "check": "npm run typecheck && npm run lint && npm test",
-    "lint": "biome check .",
-    "test": "npm run test:unit && npm run test:e2e",
-    "test:e2e": "node --experimental-strip-types --test test/e2e.test.ts",
-    "test:unit": "node --experimental-strip-types --test test/unit.test.ts",
-    "typecheck": "tsc"
-  },
-  "files": [
-    "src",
-    "README.md"
-  ],
-  "pi": {
-    "extensions": [
-      "./src/index.ts"
-    ]
-  },
-  "peerDependencies": {
-    "@earendil-works/pi-coding-agent": ">=0.85.1 <1"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "^2.5.13",
-    "@types/node": "^26.5.1",
-    "typescript": "^7.0.2"
-  }
+	"name": "{{ project_name }}",
+	"version": "0.1.0",
+	"private": true,
+	"description": "{{ project_description }}",
+	"type": "module",
+	"keywords": [
+		"pi-package"
+	],
+	"engines": {
+		"node": ">=22.19.0"
+	},
+	"scripts": {
+		"check": "npm run typecheck && npm run lint && npm test",
+		"lint": "biome check .",
+		"test": "npm run test:unit && npm run test:e2e",
+		"test:e2e": "node --experimental-strip-types --test test/e2e.test.ts",
+		"test:unit": "node --experimental-strip-types --test test/unit.test.ts",
+		"typecheck": "tsc"
+	},
+	"files": [
+		"src",
+		"README.md"
+	],
+	"pi": {
+		"extensions": [
+			"./src/index.ts"
+		]
+	},
+	"peerDependencies": {
+		"@earendil-works/pi-ai": "*",
+		"@earendil-works/pi-coding-agent": ">=0.85.1 <1",
+		"typebox": "*"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2.5.13",
+		"@types/node": "^26.5.1",
+		"minimatch": "^10.2.6",
+		"typescript": "^7.0.2",
+		"yaml": "^2.9.1"
+	}
 }

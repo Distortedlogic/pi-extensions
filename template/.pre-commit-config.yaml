@@ -4,43 +4,70 @@ default_stages:
 
 repos:
   - repo: https://github.com/biomejs/pre-commit
-    rev: main
+    rev: v2.5.13
     hooks:
       - id: biome-check
+        types: [text]
+        files: '\.(?:cjs|cts|js|jsx|json|jsonc|mjs|mts|ts|tsx)$'
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: main
+    rev: v0.16.7
     hooks:
       - id: ruff-check
         args:
           - --fix
+        types_or: [python, pyi]
       - id: ruff-format
+        types_or: [python, pyi]
 
   - repo: https://github.com/doublify/pre-commit-rust
-    rev: master
+    rev: v1.0
     hooks:
       - id: fmt
+        types: [rust]
+        files: '\.rs$'
       - id: clippy
+        types: [rust]
+        files: '\.rs$'
 
   - repo: https://github.com/koalaman/shellcheck-precommit
-    rev: master
+    rev: v0.11.0
     hooks:
       - id: shellcheck
+        types: [shell]
 
   - repo: https://github.com/gitleaks/gitleaks
-    rev: master
+    rev: v8.30.0
     hooks:
       - id: gitleaks
+        types: [text]
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: main
+    rev: v6.0.0
     hooks:
       - id: check-added-large-files
+        types: [file]
       - id: check-case-conflict
+        types: [file]
       - id: check-json
+        types: [json]
       - id: check-merge-conflict
+        types: [text]
       - id: check-toml
+        types: [toml]
       - id: check-yaml
+        types: [yaml]
       - id: detect-private-key
+        types: [text]
       - id: end-of-file-fixer
+        types: [text]
       - id: trailing-whitespace
+        types: [text]
+
+  - repo: https://github.com/python-jsonschema/check-jsonschema
+    rev: 0.38.0
+    hooks:
+      - id: check-github-workflows
+        name: validate Forgejo workflows
+        types: [yaml]
+        files: '^\.forgejo/workflows/[^/]+\.ya?ml$'

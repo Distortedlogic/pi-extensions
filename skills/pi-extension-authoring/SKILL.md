@@ -10,7 +10,8 @@ Use Pi documentation for normal extension APIs and TypeScript knowledge. This sk
 ## Repository and package baseline
 
 - Put standalone extension repositories in `~/repos/`.
-- Use the `Distortedlogic` GitHub owner.
+- Use Forgejo as the writable primary remote with the name `origin`.
+- Use the `Distortedlogic` GitHub owner for the mirror remote with the name `github`.
 - Create new extension repositories as private unless the user specifies another visibility.
 - Use Git package sources in this form: `git:github.com/Distortedlogic/<repository>`.
 - Use `@earendil-works/pi-coding-agent`, not the upstream package name.
@@ -22,11 +23,35 @@ The Copier template at the meta-package root is the only source for every new ex
 
 When you create an extension repository:
 
-1. Create an empty directory under `~/repos/`. Stop if the target directory is not empty.
-2. Run `copier copy <meta-package-root> <target-directory>` and provide the project name and short description.
-3. Implement the extension and update the existing tests. Do not keep template-only behavior.
-4. Add only the peer, runtime, and development dependencies that the source imports or the checks require.
-5. Run `npm install` to create `package-lock.json`.
+1. Set the target directory under `~/repos/`, and create it if it does not exist.
+2. Confirm that the target directory contains no files or directories, including hidden entries. Stop if it is not empty.
+3. Derive the package name from the final target directory name.
+4. Resolve the meta-package root from this skill file (`../..`). Apply it with `copier copy <meta-package-root> <target-directory>`. Give Copier the derived package name and the short project description.
+5. Initialize the target as a Git repository with the `main` branch. In the target directory, run `pre-commit install --install-hooks --hook-type pre-commit --hook-type pre-push`.
+6. Add only the dependencies that the source and checks require. Run `npm install` to create `package-lock.json`.
+7. Implement the extension in `src/`.
+8. Replace the template-only unit and end-to-end tests with tests for the extension behavior.
+9. Run all configured checks:
+
+   ```bash
+   pre-commit run --all-files
+   npm run check
+   PI_OFFLINE=1 npm run test:e2e
+   ```
+
+10. Create the private Forgejo repository and the private GitHub mirror. Add Forgejo as `origin` and GitHub as `github`:
+
+    ```bash
+    git remote add origin <forgejo-ssh-url>
+    git remote add github git@github.com:Distortedlogic/<repository>.git
+    ```
+
+11. Commit the validated files. Push `main` to Forgejo first, and then push the same commit to GitHub:
+
+    ```bash
+    git push -u origin main
+    git push github main
+    ```
 
 Put all runtime TypeScript files in `src/`. Start with only `src/index.ts`. Add another file only for a clear function, and name it for that function. Keep Pi registration in `src/index.ts`. Do not add empty modules or general `utils.ts`, `helpers.ts`, or `common.ts` files.
 

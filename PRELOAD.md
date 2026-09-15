@@ -16794,42 +16794,25 @@ export function wrapRegisteredTools(registeredTools: RegisteredTool[], runner: E
 
 File: TREE.txt
 
-/tmp/pi-context-preload-tree-75jQlT/paths.txt
+/tmp/pi-context-preload-tree-hfeNGH/paths.txt
 ├── .pi
-│   └── readcache
-│       ├── objects
-│       │   ├── sha256-00e74e851cb5471a3b9cef61c53f8a35c30b7a6484c513249fffec84cf92cdda.txt
-│       │   ├── sha256-016a84442f2e0e8c3e4bcfc1c91a762b000ff34f972706a29608f8d535744bc0.txt
-│       │   ├── sha256-050c996aa2ad93cc5edf36c6b91bb3f3a4b930d88e9dd8f1d20b6043dfc4a21b.txt
-│       │   ├── sha256-0728e624f7234b893e506ff06e819b875b47199c7d416ad9a95678c70ce3965b.txt
-│       │   ├── sha256-0746d83c971ddce12752c37e7b621156dd81b0b7bf6aed6990779c92591093e7.txt
-│       │   ├── sha256-10d4e0cf8be3d7d8e44828840ec6b75217612ab8142211206f7edf90674a11fa.txt
-│       │   ├── sha256-1e712a966e72a67f8282c51e6fed6d59abf1737d7aeed5721ecd9de134fc80b6.txt
-│       │   ├── sha256-25e16a142decdfc38f2c99098b6e4e3d4ddfbe3cc9f41258191d9d386ae360b5.txt
-│       │   ├── sha256-296ac485e34d94bbba3e0f44d426f175a4873c2225fab91709a1fd9683fd93fe.txt
-│       │   ├── sha256-2ef1c96f7b50fa134d002dfaae8e0a6a5737b285466fc9ebc53829a3d7262b18.txt
-│       │   ├── sha256-481ed26739a7e53c605469a82ac3012ba1aa1686f2fc7949fcdb4cc79b9fbb2b.txt
-│       │   ├── sha256-57c9d962be97851c0030ccef2538be8fbbdfcfb1fae7eab35b320baefb74fbf6.txt
-│       │   ├── sha256-58b4b5fd67f012ccf793b2da0249379ccdab28bf76188de5641efee96776b672.txt
-│       │   ├── sha256-6be8cc5f5c298ff396010786a31801e2faf6ecf40bbfdf3de32b4c5f59c50ead.txt
-│       │   ├── sha256-6d30990f9de54ad431897b0332be075c018c64f270ce937c4c36cf4ec35c6d6f.txt
-│       │   ├── sha256-70ae58ffe45e777176cfe9b284c8e7fd58f0f5ba957b36ca4230b78345478406.txt
-│       │   ├── sha256-7c2afa5fc7a2eede47608363b18a972cef43a3ee6c05913739540b4fd8030a84.txt
-│       │   ├── sha256-7fd10e247e8c367a8efcd77aec585376cc6117e5ce89ccf22f1f05bc92a47d06.txt
-│       │   ├── sha256-8a406169c557f3e348afdd361867021f87c656b82f3df3fbb6691d47e88fd40f.txt
-│       │   ├── sha256-8e3544ead35b6108ce937ded9477a44bf29e900d2baab62d17ccb6eb20aea6e5.txt
-│       │   ├── sha256-939c49fe23e5f955c9d9be5a03a5930e9fa76f535c8dfb291dd372476ae7df2e.txt
-│       │   ├── sha256-9db431970324d934a1ac0a93825dfc1fd7e86d3b79e320d11ac4401f923b4f6a.txt
-│       │   ├── sha256-9e7301856c3f6d7982d1295c0c6e8b317e93902849d0125ff3040702ba49cd47.txt
-│       │   ├── sha256-a636b04a9dfb36c3a857a6606b3346bbe4b9dccfc038a79987fa473fb9a1b4c2.txt
-│       │   ├── sha256-a74ce33309b1d88fccdca3f285b7314492216ddf35acd44551693de8e3839de0.txt
-│       │   ├── sha256-b74190daf987cc830e2485f5209c7da3ad071217e14b6e5e0265939c021ea62e.txt
-│       │   ├── sha256-b92e90cced62b3456f23abc86f5f83f2df8389b5ec6e1229b2398a86bb8731d8.txt
-│       │   ├── sha256-c2969815eada4763d0bdbf1ac023e06eff1305cfa38d1486bdeaafc103661891.txt
-│       │   ├── sha256-d4e757aa8c19e2cba7e05be79366c5145ef4b590caeb9fe26c0f47eccd7f41ed.txt
-│       │   ├── sha256-da92e314874aa7a3cd0a61a02200fdfd1571112c378411cd01671d3808a364d7.txt
-│       │   ├── sha256-dbb030516d02e851b15f8319ad98f4f962fcaa2fef0d4a261824fc358bf5559f.txt
-│       │   └── sha256-f73db62f1f5a93e87ba207e38dd52f9bebebc3b2e9382cec4460bd01eaa99734.txt
-│       └── tmp
-└── .gitignore
+├── skills
+│   └── pi-extension-authoring
+│       └── SKILL.md
+├── .tasks
+│   ├── desc-consolidate-agents-yml.md
+│   └── desc-pi-extension-templating-and-precommit.md
+├── template
+│   ├── src
+│   │   └── index.ts
+│   ├── test
+│   ├── biome.json
+│   ├── CONTEXT_PRELOAD.yml
+│   ├── package.json.jinja
+│   ├── README.md.jinja
+│   └── tsconfig.json
+├── copier.yml
+├── .gitignore
+├── package.json
+└── README.md
 

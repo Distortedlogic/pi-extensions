@@ -73,6 +73,21 @@ jobs:
           PI_OFFLINE: "1"
         run: npm run test:e2e
 
+      - name: Verify package contents and installation
+        if: steps.detect.outputs.npm == 'true'
+        env:
+          PI_OFFLINE: "1"
+        run: |
+          archive="$(npm pack --silent)"
+          mkdir -p "$RUNNER_TEMP/package-check"
+          tar -xzf "$archive" -C "$RUNNER_TEMP/package-check"
+          package_dir="$RUNNER_TEMP/package-check/package"
+          test -f "$package_dir/package.json"
+          test -f "$package_dir/src/index.ts"
+          test -f "$package_dir/README.md"
+          PI_CODING_AGENT_DIR="$RUNNER_TEMP/pi-package-agent" npm exec -- pi install "$package_dir"
+          PI_CODING_AGENT_DIR="$RUNNER_TEMP/pi-package-agent" npm exec -- pi list
+
       - name: Install pytest
         if: steps.detect.outputs.python == 'true'
         run: python -m pip install pytest

@@ -1,5 +1,10 @@
 _subdirectory: template
 _answers_file: .copier-answers.yml
+_skip_if_exists:
+  - src/index.ts
+  - test/unit.test.ts
+  - test/e2e.test.ts
+  - README.md
 
 project_name:
   type: str

@@ -69,6 +69,16 @@ repos:
   - repo: https://github.com/python-jsonschema/check-jsonschema
     rev: 0.38.0
     hooks:
+      - id: check-jsonschema
+        name: validate CONTEXT_PRELOAD.yml
+        args: [--schemafile, .pi/schemas/context-preload.schema.json]
+        types: [yaml]
+        files: '^CONTEXT_PRELOAD\.yml$'
+      - id: check-jsonschema
+        name: validate Pi review policy
+        args: [--schemafile, .pi/schemas/review.schema.json]
+        types: [yaml]
+        files: '^\.pi/review\.yml$'
       - id: check-github-workflows
         name: validate Forgejo workflows
         types: [yaml]

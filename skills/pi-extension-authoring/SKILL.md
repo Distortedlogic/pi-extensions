@@ -18,17 +18,15 @@ Use Pi documentation for normal extension APIs and TypeScript knowledge. This sk
 - Do not add `@earendil-works/pi-tui` unless source code imports TUI components directly. `ctx.ui` does not require a direct TUI dependency.
 - Do not add Vite or a build step for a normal Pi extension.
 
-The `template/` directory next to this file is the source for every new extension repository. Do not copy a baseline from another repository.
+The Copier template at the meta-package root is the only source for every new extension repository. Resolve the package root from this skill file (`../..`) and use that directory as the Copier source. Do not copy a baseline manually or use another repository.
 
 When you create an extension repository:
 
 1. Create an empty directory under `~/repos/`. Stop if the target directory is not empty.
-2. Copy all content from `template/`, including `.gitignore`, into the target directory.
-3. Replace every `__NAME__` with the repository and package name.
-4. Replace every `__DESCRIPTION__` with the short package description.
-5. Implement the extension and update the existing tests. Do not keep template-only behavior.
-6. Add only the peer, runtime, and development dependencies that the source imports or the checks require.
-7. Run `npm install` to create `package-lock.json`.
+2. Run `copier copy <meta-package-root> <target-directory>` and provide the project name and short description.
+3. Implement the extension and update the existing tests. Do not keep template-only behavior.
+4. Add only the peer, runtime, and development dependencies that the source imports or the checks require.
+5. Run `npm install` to create `package-lock.json`.
 
 Put all runtime TypeScript files in `src/`. Start with only `src/index.ts`. Add another file only for a clear function, and name it for that function. Keep Pi registration in `src/index.ts`. Do not add empty modules or general `utils.ts`, `helpers.ts`, or `common.ts` files.
 
@@ -36,7 +34,7 @@ Install and run local package tools through npm scripts. Do not guess a CLI path
 
 ## Preload manifest
 
-Use the copied `CONTEXT_PRELOAD.yml` as the baseline. It preloads runtime TypeScript, package metadata, and the common Pi extension references. It intentionally does not preload `README.md`, test TypeScript files, or lock files.
+Use the generated `CONTEXT_PRELOAD.yml` as the baseline. It preloads runtime TypeScript, package metadata, and the common Pi extension references. It intentionally does not preload `README.md`, test TypeScript files, or lock files.
 
 Add only source and Pi files needed by that extension. Do not preload lock files.
 

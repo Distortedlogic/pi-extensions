@@ -106,7 +106,19 @@ For a new private extension:
 
 For an installed extension update:
 
-1. Run all configured checks.
-2. Commit and push.
-3. Run `pi install` with the same Git source.
-4. Reload or restart Pi.
+1. Start with a clean worktree. Keep existing behavior changes out of the template update.
+2. When a template update is requested, run `copier update`. If the request names a template revision, run `copier update --vcs-ref <template-ref>`.
+3. Review the complete three-way diff. Resolve each Copier conflict, and review the result with `git diff`.
+4. Run `pre-commit autoupdate` only when the requested update includes hook revisions. Review those revision changes with the template changes.
+5. Run all configured checks:
+
+   ```bash
+   pre-commit run --all-files
+   npm run check
+   PI_OFFLINE=1 npm run test:e2e
+   ```
+
+6. Commit template changes separately from extension behavior changes when practical.
+7. Push the validated commits to Forgejo first, and then update the GitHub mirror.
+8. Run `pi install` with the same Git source.
+9. Reload or restart Pi.

@@ -8,7 +8,7 @@ Contract:
 - An extension reads only its own key and ignores the other top-level keys.
 - Inside a known key, unknown sub-keys are rejected.
 - Value shapes are identical to the legacy files.
-- `AGENTS.yml` wins over a legacy file. When both exist, warn once and use `AGENTS.yml`.
+- When `AGENTS.yml` is absent, the legacy file is read with current behavior. When both exist, `AGENTS.yml` wins.
 - The project-trust gate applies to the project file.
 
 Example:
@@ -30,47 +30,29 @@ prompts:
 
 ## Work unit 1: pi-context-preload loader
 
-- [ ] In `pi-context-preload/index.ts`, add a lookup for `<cwd>/AGENTS.yml` in `collectPreload`: when the file exists, parse it with the existing `read-yaml-file` dependency and use its `preload` value as the configuration; when it is absent, fall back to `CONTEXT_PRELOAD.yml` with the current behavior.
-- [ ] Validate the `preload` value with the existing `PRELOAD_CONFIG` TypeBox schema, and make the error messages name `AGENTS.yml` and the `preload` key; keep preset `extends` handling, size limits, and the project-trust gate unchanged.
-- [ ] When both `AGENTS.yml` and `CONTEXT_PRELOAD.yml` exist, use `AGENTS.yml` and surface one deprecation warning through `ctx.ui.notify`.
-- [ ] Add `AGENTS.yml` to the ignore lists in `collectFilesystemTree` and in the selected-file `globby` call so the config file never enters the tree block or the preload blocks.
-- [ ] Update `test/unit.test.ts` and `test/e2e.test.ts` to cover AGENTS.yml as the primary file, legacy fallback, both-present precedence, an invalid `preload` value, and a file that contains only other keys.
-- [ ] Run `npm run check` in `pi-context-preload` until it is clean.
+- [ ] In `/home/entropybender/.pi/agent/git/github.com/Distortedlogic/pi-context-preload/index.ts`, change `collectPreload` to resolve `<cwd>/AGENTS.yml` first: parse it with the existing `read-yaml-file` call and use its `preload` value, validated by the existing `PRELOAD_CONFIG` TypeBox schema, with error messages that name `AGENTS.yml` and the `preload` key; when `AGENTS.yml` is absent, keep the current `CONTEXT_PRELOAD.yml` path unchanged.
+- [ ] In the same file, add `AGENTS.yml` to the ignore list in `collectFilesystemTree` and to the `ignore` array of the file-selection `globby` call so it never enters the tree block or the preload blocks.
+- [ ] In `pi-context-preload/test/unit.test.ts` and `test/e2e.test.ts`, extend the existing cases to cover preload from `AGENTS.yml`, fallback to `CONTEXT_PRELOAD.yml`, and an invalid `preload` value.
 
 ## Work unit 2: pi-modes loader
 
-- [ ] In `pi-modes/index.ts`, after the package mode files load, read project modes from the `modes` key of `<cwd>/AGENTS.yml` when present; otherwise keep reading `<cwd>/.pi/AGENT_MODES.yml`.
-- [ ] Keep precedence as package files first, legacy project file second, `AGENTS.yml` last so it wins on name conflicts; when both project files exist, parse both in that order and notify once that the legacy file is deprecated.
-- [ ] Validate the `modes` value with the existing `mapAsMap` rules (non-empty string names, string values), with error messages that name `AGENTS.yml` and the `modes` key, and keep the project-trust gate for both project files.
-- [ ] Do not add a test suite, because `pi-modes` has none; verify manually by loading the extension locally and confirming Shift+Tab cycling with modes from `AGENTS.yml`, fallback from `.pi/AGENT_MODES.yml`, and no error for untrusted projects.
+- [ ] In `/home/entropybender/.pi/agent/git/github.com/Distortedlogic/pi-modes/index.ts`, keep loading package mode files first, then read project modes from the `modes` key of `<cwd>/AGENTS.yml` when that file exists and from `<cwd>/.pi/AGENT_MODES.yml` only when it does not; keep the existing `mapAsMap` validation (non-empty string names, string values), the last-wins precedence, and the project-trust gate, with error messages that name `AGENTS.yml` and the `modes` key.
 
 ## Work unit 3: pi-prompts hook
 
-- [ ] In `pi-prompts/src/index.ts`, add a `resources_discover` handler that returns the `prompts` list from `<cwd>/AGENTS.yml` as `promptPaths` so Pi loads them as native prompt templates.
-- [ ] Guard the handler with `ctx.isProjectTrusted()`, parse only the `prompts` key, validate it as a list of non-empty strings, and ignore the file when the key is absent.
-- [ ] Update `test/unit.test.ts` and `test/e2e.test.ts` for prompt path discovery, absent key, invalid value, and the trust gate.
-- [ ] Run `npm run check` in `pi-prompts` until it is clean.
+- [ ] In `/home/entropybender/.pi/agent/git/github.com/Distortedlogic/pi-prompts/src/index.ts`, add `yaml` as a dependency (same package `pi-modes` uses) and register a `resources_discover` handler that, when `ctx.isProjectTrusted()` and `<cwd>/AGENTS.yml` exists, parses it, validates the `prompts` key as a list of non-empty strings, and returns them as `promptPaths`; an absent key returns nothing.
+- [ ] In `pi-prompts/test/unit.test.ts` and `test/e2e.test.ts`, extend the existing cases to cover prompt path discovery from `AGENTS.yml`, an absent `prompts` key, an invalid value, and an untrusted project.
 
-## Work unit 4: Docs and skills
+## Work unit 4: template repo
 
-- [ ] Update `pi-context-preload/README.md` to document the `preload` key in `AGENTS.yml`, the fallback, and the deprecation of standalone `CONTEXT_PRELOAD.yml`.
-- [ ] Update `pi-modes/README.md` to document the `modes` key, the new project file location, and the precedence order.
-- [ ] Update `pi-prompts/README.md` to document the `prompts` key.
-- [ ] Update `skills/context-preload-authoring/SKILL.md` in `pi-context-preload` and `skills/add-pi-mode/SKILL.md` in `pi-modes` so their procedures reference `AGENTS.yml`.
+- [ ] In `/home/entropybender/pi-extensions`, replace `template/CONTEXT_PRELOAD.yml` with `template/AGENTS.yml` holding the same content under a `preload` key, and update the old filename references in `template/README.md.jinja` and `skills/pi-extension-authoring/SKILL.md`.
 
-## Work unit 5: Template repo
+## Work unit 5: Migrate extension repos
 
-- [ ] In `/home/entropybender/pi-extensions`, replace `template/CONTEXT_PRELOAD.yml` with `template/AGENTS.yml` that holds the same content under a `preload` key, and update `copier.yml`, `skills/pi-extension-authoring/SKILL.md`, and any other template file that references the old filename.
-- [ ] Render the template once into a scratch directory and confirm the emitted project contains a valid `AGENTS.yml`.
+- [ ] In `/home/entropybender/.pi/agent/git/github.com/Distortedlogic/pi-context-preload`, move the root `CONTEXT_PRELOAD.yml` content into an `AGENTS.yml` under the `preload` key, delete the old file, and commit.
+- [ ] In `/home/entropybender/.pi/agent/git/github.com/Distortedlogic/pi-prompts`, move the root `CONTEXT_PRELOAD.yml` content into an `AGENTS.yml` under the `preload` key, delete the old file, and commit.
+- [ ] In `/home/entropybender/.pi/agent/git/github.com/Distortedlogic/pi-modes`, move the root `CONTEXT_PRELOAD.yml` content into an `AGENTS.yml` under the `preload` key, delete the old file, and commit; keep the root `AGENT_MODES.yml` unchanged because it is a package-owned file declared under `pi.modes`.
 
-## Work unit 6: Migrate projects
+## Work unit 6: Docs and skills
 
-- [ ] For each project with a `CONTEXT_PRELOAD.yml`, move its content under the `preload` key of a new `AGENTS.yml`, delete the old file, and run `/reload`.
-- [ ] For each project with a `.pi/AGENT_MODES.yml`, move its content under the `modes` key of that project's `AGENTS.yml`, delete the old file, and run `/reload`.
-- [ ] Migrate the extension repos' own project files (`pi-prompts/CONTEXT_PRELOAD.yml`, `pi-modes/CONTEXT_PRELOAD.yml`); keep `pi-modes/AGENT_MODES.yml` unchanged because it is a package-owned file declared under `pi.modes`.
-- [ ] In each migrated project, confirm preload still injects context with the file-count notification, the mode widget cycles, and prompt templates load.
-
-## Work unit 7: Remove fallbacks
-
-- [ ] After all known projects are migrated, remove the `CONTEXT_PRELOAD.yml` fallback from `pi-context-preload` and the `.pi/AGENT_MODES.yml` fallback from `pi-modes`, and replace each with a warning when a legacy file exists.
-- [ ] Publish the final versions and update the three READMEs to remove the fallback documentation.
+- [ ] Update `pi-context-preload/README.md`, `pi-modes/README.md`, `pi-prompts/README.md`, `pi-context-preload/skills/context-preload-authoring/SKILL.md`, and `pi-modes/skills/add-pi-mode/SKILL.md` to document the `AGENTS.yml` location, the per-extension key, and the legacy-file fallback for each extension, and commit each repo.

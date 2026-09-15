@@ -1,0 +1,83 @@
+name: Check
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Detect project files
+        id: detect
+        shell: bash
+        run: |
+          if git ls-files --error-unmatch package.json >/dev/null 2>&1; then
+            echo "npm=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "npm=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          if git ls-files "*.py" "*.pyi" | grep -q .; then
+            echo "python=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "python=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          if git ls-files "Cargo.toml" "*/Cargo.toml" | grep -q .; then
+            echo "cargo=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "cargo=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Set up Node.js
+        if: steps.detect.outputs.npm == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.19.0"
+
+      - name: Set up Rust
+        if: steps.detect.outputs.cargo == 'true'
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+
+      - name: Install pre-commit
+        run: python -m pip install pre-commit==4.6.2
+
+      - name: Run pre-commit
+        run: pre-commit run --all-files
+
+      - name: Install npm dependencies
+        if: steps.detect.outputs.npm == 'true'
+        run: npm ci
+
+      - name: Run npm checks
+        if: steps.detect.outputs.npm == 'true'
+        run: npm run check
+
+      - name: Install pytest
+        if: steps.detect.outputs.python == 'true'
+        run: python -m pip install pytest
+
+      - name: Run pytest
+        if: steps.detect.outputs.python == 'true'
+        run: python -m pytest
+
+      - name: Run Cargo checks
+        if: steps.detect.outputs.cargo == 'true'
+        run: |
+          cargo fmt --all --check
+          cargo clippy --all-targets --all-features -- -D warnings
+          cargo test --all-targets --all-features

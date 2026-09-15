@@ -27,8 +27,10 @@ repos:
         types: [rust]
         files: '\.rs$'
       - id: clippy
-        types: [rust]
-        files: '\.rs$'
+        args: [--all-targets, --all-features, --, -D, warnings]
+        types: [file]
+        files: '(^|/)(?:Cargo\.toml|.*\.rs)$'
+        stages: [pre-push]
 
   - repo: https://github.com/koalaman/shellcheck-precommit
     rev: v0.11.0
@@ -71,3 +73,37 @@ repos:
         name: validate Forgejo workflows
         types: [yaml]
         files: '^\.forgejo/workflows/[^/]+\.ya?ml$'
+
+  - repo: local
+    hooks:
+      - id: npm-typecheck
+        name: npm typecheck
+        entry: npm run typecheck
+        language: system
+        pass_filenames: false
+        types: [text]
+        files: '^(?:package(?:-lock)?\.json|tsconfig\.json|src/.*\.(?:cjs|cts|js|jsx|mjs|mts|ts|tsx)|test/.*\.(?:cjs|cts|js|jsx|mjs|mts|ts|tsx))$'
+        stages: [pre-push]
+      - id: npm-test
+        name: npm test
+        entry: npm test
+        language: system
+        pass_filenames: false
+        types: [text]
+        files: '^(?:package(?:-lock)?\.json|src/.*\.(?:cjs|cts|js|jsx|mjs|mts|ts|tsx)|test/.*\.(?:cjs|cts|js|jsx|mjs|mts|ts|tsx))$'
+        stages: [pre-push]
+      - id: pytest
+        name: pytest
+        entry: python -m pytest
+        language: system
+        pass_filenames: false
+        types_or: [python, pyi]
+        stages: [pre-push]
+      - id: cargo-test
+        name: cargo test
+        entry: cargo test --all-targets --all-features
+        language: system
+        pass_filenames: false
+        types: [file]
+        files: '(^|/)(?:Cargo\.toml|.*\.rs)$'
+        stages: [pre-push]

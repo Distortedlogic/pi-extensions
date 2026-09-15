@@ -1,0 +1,7 @@
+files:
+  - "src/**/*.ts"
+  - "package.json"
+  - "../../3rd/pi/packages/coding-agent/docs/extensions.md"
+  - "../../3rd/pi/packages/coding-agent/src/core/messages.ts"
+  - "../../3rd/pi/packages/coding-agent/src/core/extensions/{types,runner}.ts"
+  - "../../3rd/pi/packages/coding-agent/src/core/agent-session.ts"

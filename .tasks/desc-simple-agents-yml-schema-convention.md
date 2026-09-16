@@ -30,7 +30,7 @@
 
 ## WU-04: Migrate Configuration
 
-- [ ] Move every tracked preload configuration to `pi.extensions.pi-context-preload`, move every tracked prompt map to `pi.extensions.pi-prompts.prompts`, move each prompt chain map to `pi.extensions.pi-prompts.chains`, and update existing fixtures, inline YAML, presets, templates, and examples to the same structure.
+- [ ] Move every tracked preload configuration to `pi.extensions.pi-context-preload`, move every tracked prompt map to `pi.extensions.pi-prompts.prompts`, move each prompt chain map to `pi.extensions.pi-prompts.chains`, and update existing fixtures, inline YAML, presets, templates, package `AGENTS.yml` files, extension READMEs, and `skills/context-preload-authoring/SKILL.md` to the same structure.
 
 - [ ] Generate `schema/AGENTS.schema.json` from `agentsSchema` and remove all remaining reads and tracked configuration uses of the old top-level `preload` and `prompts` fields.
 
@@ -39,3 +39,11 @@
 - [ ] Run the existing typecheck, Biome, unit, and end-to-end checks in `pi-context-preload` and `pi-prompts`, then run the root `check` command and correct every failure.
 
 - [ ] Run clean full and production-only installs for both extensions and the root package, verify that each packaged `agents.ts` imports through its conventional package-file path, and verify that both production extension entry points load without provider credentials.
+
+## WU-06: Cut Over the Active Installation
+
+- [ ] Commit and push the verified `pi-context-preload` and `pi-prompts` changes before updating the root package dependencies, replace the root dependency references with the pushed commits, update the root lockfile, regenerate `schema/AGENTS.schema.json`, rerun the root checks, and commit and push the root package.
+
+- [ ] Before installing the changed packages, migrate every active tracked project `AGENTS.yml` that still uses top-level `preload` or `prompts`, validate each migrated file with `agents:check`, and leave unrelated top-level configuration unchanged.
+
+- [ ] Install or update `pi-context-preload`, `pi-prompts`, and the root package from their pushed remotes, restart Pi, start a fresh trusted session, and verify that context preload, prompt discovery, and prompt chains use the namespaced configuration while an untrusted project does not load project-owned configuration.

@@ -1,0 +1,23 @@
+- [ ] Inventory every distinct Git repository under `~/pi-extensions`, `~/repos`, and `~/.pi/agent/git/github.com/Distortedlogic`; record each root `AGENTS.yml`, `CONTEXT_PRELOAD.yml`, `AGENT_MODES.yml`, and `prompts.yml`, the package manifests that ship or reference them, the source code that reads them, and any pre-existing worktree changes so migration commits do not include unrelated work.
+
+- [ ] Define and apply the final `AGENTS.yml` contract consistently: `preload` is the existing preload object, `modes` is a map of non-empty mode names to string values, and `prompts` is a map of named prompt definitions plus the reserved `chains` map; each extension must validate only its own key, ignore unrelated top-level keys, and provide no legacy-file fallback.
+
+- [ ] Update `pi-context-preload` in each maintained source checkout to read only trusted `<cwd>/AGENTS.yml`, validate only `preload` with the existing TypeBox schema, return no configuration when the file or key is absent, keep `AGENTS.yml` out of preload blocks and `TREE.txt`, remove all `CONTEXT_PRELOAD.yml` fallback branches and constants, and keep preset, context-source, ordering, size-limit, and error behavior unchanged.
+
+- [ ] Update `pi-context-preload` unit and end-to-end tests to use `AGENTS.yml.preload` exclusively, cover an absent file, an absent `preload` key, invalid `preload` data, trusted-project loading, ignore behavior, presets, contexts, files, and limits, and delete every fallback test or fixture that creates `CONTEXT_PRELOAD.yml`.
+
+- [ ] Update `pi-modes` to discover package modes from the `modes` key of each package-root `AGENTS.yml`, load trusted project modes from `<cwd>/AGENTS.yml` after package modes, preserve deterministic package ordering and last-value-wins behavior, remove `.pi/AGENT_MODES.yml` fallback handling, and report errors with the source `AGENTS.yml` path and `modes` key.
+
+- [ ] Update packages that provide modes, including `pi-modes` and `pi-tasks`, by merging each `AGENT_MODES.yml` map into the package root `AGENTS.yml.modes`, deleting `AGENT_MODES.yml`, removing obsolete `pi.modes` and package `files` references, ensuring `AGENTS.yml` is shipped, and updating mode-loading and package-archive tests for the new package convention.
+
+- [ ] Refactor `pi-prompts` to read prompt definitions and the reserved `chains` map from `AGENTS.yml.prompts`, generate native Markdown prompt files through the existing cache pipeline, discover package-owned prompt definitions from package-root `AGENTS.yml` files, read project definitions only after the project trust gate, preserve source ordering and duplicate-name validation, and remove the path-list handler plus all root, global, and `.pi` `prompts.yml` fallback paths.
+
+- [ ] Update packages that provide prompt definitions, including `pi-prompts` and `pi-tasks`, by merging each `prompts.yml` map into the package root `AGENTS.yml.prompts`, deleting `prompts.yml`, removing obsolete package `files` references, ensuring `AGENTS.yml` is shipped, and converting prompt parser, chain, cache-generation, end-to-end, fixture, and package-archive tests to the nested `prompts` shape.
+
+- [ ] Merge every remaining `CONTEXT_PRELOAD.yml` under `~/pi-extensions`, `~/repos`, and maintained installed checkouts into the same repository root `AGENTS.yml.preload` without replacing existing `modes` or `prompts` keys, delete the old file, and inspect each merged YAML document to confirm that all patterns, presets, and context names were preserved.
+
+- [ ] Remove all backward-compatibility documentation from the three extension READMEs and authoring skills, document only the combined root `AGENTS.yml` format and per-extension keys, update examples to preserve unrelated keys during edits, and remove instructions that mention `CONTEXT_PRELOAD.yml`, `.pi/AGENT_MODES.yml`, or `prompts.yml` as supported configuration.
+
+- [ ] Run each affected repository's configured type checks, lint checks, unit tests, end-to-end tests, package dry-run checks, and focused integration checks; verify trusted and untrusted project behavior, package discovery, mode precedence, prompt chains, generated prompt files, and context preload output without making an LLM request.
+
+- [ ] Perform an ignore-independent final audit across all target roots, excluding Git metadata and third-party dependency directories, and require zero maintained `CONTEXT_PRELOAD.yml`, `AGENT_MODES.yml`, or `prompts.yml` files and zero source, test, manifest, README, or skill references to legacy fallback behavior before committing each distinct repository separately with a short migration message.

@@ -62,23 +62,21 @@ const result = await compressRange(pi, ctx, {
 **Project configuration:** root `<cwd>/AGENTS.yml`
 
 ```yaml
-pi:
-  extensions:
-    pi-context-preload:
-      extends:
-        - pi-extension
-      contexts:
-        - dioxus
-      files:
-        - package.json
-        - src/**/*.ts
-        - "!test/**/*"
+pi-context-preload:
+  extends:
+    - pi-extension
+  contexts:
+    - dioxus
+  files:
+    - package.json
+    - src/**/*.ts
+    - "!test/**/*"
 ```
 
 - `extends` loads package presets first. `contexts` selects package-owned dynamic sources. `files` uses ordered project globs.
 - Dynamic context appears first, selected file blocks follow, and generated `TREE.txt` is last.
 - Treat all blocks as repository context, not as new work requests.
-- Use `context-preload-authoring` before creating, changing, or auditing `preload`.
+- Use `context-preload-authoring` before creating, changing, or auditing `pi-context-preload`.
 - Use `dioxus-specialized` only for the Dioxus tasks named in that skill description.
 - Run `/reload` after configuration changes.
 
@@ -87,11 +85,9 @@ pi:
 **Configuration:** package-root or trusted project-root `AGENTS.yml`
 
 ```yaml
-pi:
-  extensions:
-    pi-modes:
-      exec: ""
-      brief: "Give a brief answer."
+pi-modes:
+  exec: ""
+  brief: "Give a brief answer."
 ```
 
 - `Shift+Tab` cycles configured modes in TUI mode.
@@ -126,18 +122,16 @@ pi.events.emit("pi-modes:set", { name: "brief" });
 **Configuration:** package-root or trusted project-root `AGENTS.yml`
 
 ```yaml
-pi:
-  extensions:
-    pi-prompts:
-      prompts:
-        review:
-          description: Review the changes
-          body: Review the changes and report defects.
-        fix:
-          description: Fix the defects
-          body: Fix each confirmed defect.
-      chains:
-        review-fix: [review, fix]
+pi-prompts:
+  prompts:
+    review:
+      description: Review the changes
+      body: Review the changes and report defects.
+    fix:
+      description: Fix the defects
+      body: Fix each confirmed defect.
+  chains:
+    review-fix: [review, fix]
 ```
 
 - `Alt+P` cycles native prompts, chains, and `none` while preserving the prior editor draft.

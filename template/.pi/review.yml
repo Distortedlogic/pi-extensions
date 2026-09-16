@@ -13,7 +13,7 @@ items:
     files:
       - "src/**/*.ts"
       - "package.json"
-      - "CONTEXT_PRELOAD.yml"
+      - "AGENTS.yml"
     prompt: Review Pi lifecycle events, tool and command contracts, session behavior, trust checks, and provider interactions.
 
   - id: tests

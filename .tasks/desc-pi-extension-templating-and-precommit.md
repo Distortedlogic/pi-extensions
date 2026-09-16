@@ -28,13 +28,13 @@
 
 - [ ] Mark implementation-owned files such as `src/index.ts`, `test/unit.test.ts`, `test/e2e.test.ts`, and project-specific README content as seed files that Copier must not overwrite during an update.
 
-- [ ] Keep managed baseline files such as `biome.json`, `tsconfig.json`, `CONTEXT_PRELOAD.yml`, `.gitignore`, `.pre-commit-config.yaml`, Forgejo workflows, and standard review configuration available for explicit Copier updates through its normal three-way merge.
+- [ ] Keep managed baseline files such as `biome.json`, `tsconfig.json`, `AGENTS.yml`, `.gitignore`, `.pre-commit-config.yaml`, Forgejo workflows, and standard review configuration available for explicit Copier updates through its normal three-way merge.
 
 - [ ] Preserve the current template decisions for ESM packages, Node `>=22.19.0`, no Vite, no extension build step, strict no-output TypeScript, Biome checks, the existing Node test runner, and the existing offline Pi load test.
 
 ## Work unit 4: Context preload correction
 
-- [ ] Replace the template `CONTEXT_PRELOAD.yml` repeated Pi source paths with `extends: pi-extension` and keep only extension-owned files such as `src/**/*.ts` and `package.json` in the local `files` list.
+- [ ] Replace repeated Pi source paths in the template `AGENTS.yml` preload object with `extends: pi-extension` and keep only extension-owned files such as `src/**/*.ts` and `package.json` in the local `files` list.
 
 - [ ] Keep `presets/pi-extension.yml` inside `pi-context-preload` because that preset belongs to the context preload package and must not move into the meta package.
 
@@ -48,7 +48,7 @@
 
 - [ ] Separate fast pre-commit hooks from pre-push and Forgejo CI hooks so local commits run formatters, fast linters, configuration validation, deterministic generators, and secret detection while full type checks and tests run during pre-push or CI.
 
-- [ ] Configure `check-jsonschema` for `CONTEXT_PRELOAD.yml` and `.pi/review.yml` so template context files and review policy files fail early on invalid shapes.
+- [ ] Configure `check-jsonschema` for `AGENTS.yml` and `.pi/review.yml` so template context files and review policy files fail early on invalid shapes.
 
 - [ ] Add any Pi-specific manifest, generator, or package-content check to a separate shared `pi-pre-commit-hooks` repository only when no established upstream hook already provides that behavior.
 

@@ -70,10 +70,10 @@ repos:
     rev: 0.38.0
     hooks:
       - id: check-jsonschema
-        name: validate CONTEXT_PRELOAD.yml
+        name: validate AGENTS.yml preload
         args: [--schemafile, .pi/schemas/context-preload.schema.json]
         types: [yaml]
-        files: '^CONTEXT_PRELOAD\.yml$'
+        files: '^AGENTS\.yml$'
       - id: check-jsonschema
         name: validate Pi review policy
         args: [--schemafile, .pi/schemas/review.schema.json]

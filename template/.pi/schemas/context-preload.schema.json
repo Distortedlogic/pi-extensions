@@ -3,19 +3,28 @@
 	"$id": "https://distortedlogic.net/schemas/context-preload.schema.json",
 	"title": "Pi context preload configuration",
 	"type": "object",
-	"additionalProperties": false,
+	"additionalProperties": true,
 	"properties": {
-		"extends": {
-			"$ref": "#/$defs/stringList"
-		},
-		"files": {
-			"$ref": "#/$defs/stringList"
-		},
-		"contexts": {
-			"$ref": "#/$defs/stringList"
+		"preload": {
+			"$ref": "#/$defs/preload"
 		}
 	},
 	"$defs": {
+		"preload": {
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"extends": {
+					"$ref": "#/$defs/stringList"
+				},
+				"files": {
+					"$ref": "#/$defs/stringList"
+				},
+				"contexts": {
+					"$ref": "#/$defs/stringList"
+				}
+			}
+		},
 		"stringList": {
 			"type": "array",
 			"items": {

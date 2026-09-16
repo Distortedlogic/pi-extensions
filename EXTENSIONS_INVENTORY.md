@@ -62,15 +62,17 @@ const result = await compressRange(pi, ctx, {
 **Project configuration:** root `<cwd>/AGENTS.yml`
 
 ```yaml
-preload:
-  extends:
-    - pi-extension
-  contexts:
-    - dioxus
-  files:
-    - package.json
-    - src/**/*.ts
-    - "!test/**/*"
+pi:
+  extensions:
+    pi-context-preload:
+      extends:
+        - pi-extension
+      contexts:
+        - dioxus
+      files:
+        - package.json
+        - src/**/*.ts
+        - "!test/**/*"
 ```
 
 - `extends` loads package presets first. `contexts` selects package-owned dynamic sources. `files` uses ordered project globs.
@@ -85,9 +87,11 @@ preload:
 **Configuration:** package-root or trusted project-root `AGENTS.yml`
 
 ```yaml
-modes:
-  exec: ""
-  brief: "Give a brief answer."
+pi:
+  extensions:
+    pi-modes:
+      exec: ""
+      brief: "Give a brief answer."
 ```
 
 - `Shift+Tab` cycles configured modes in TUI mode.
@@ -122,15 +126,18 @@ pi.events.emit("pi-modes:set", { name: "brief" });
 **Configuration:** package-root or trusted project-root `AGENTS.yml`
 
 ```yaml
-prompts:
-  review:
-    description: Review the changes
-    body: Review the changes and report defects.
-  fix:
-    description: Fix the defects
-    body: Fix each confirmed defect.
-  chains:
-    review-fix: [review, fix]
+pi:
+  extensions:
+    pi-prompts:
+      prompts:
+        review:
+          description: Review the changes
+          body: Review the changes and report defects.
+        fix:
+          description: Fix the defects
+          body: Fix each confirmed defect.
+      chains:
+        review-fix: [review, fix]
 ```
 
 - `Alt+P` cycles native prompts, chains, and `none` while preserving the prior editor draft.

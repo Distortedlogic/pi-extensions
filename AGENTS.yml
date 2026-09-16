@@ -1,4 +1,6 @@
-preload:
-  extends:
-    - "pi-extension"
-  files: []
+pi:
+  extensions:
+    pi-context-preload:
+      extends:
+        - "pi-extension"
+      files: []

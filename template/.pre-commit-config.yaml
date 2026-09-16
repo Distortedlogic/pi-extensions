@@ -107,7 +107,8 @@ repos:
         entry: python -m pytest
         language: system
         pass_filenames: false
-        types_or: [python, pyi]
+        types: [python]
+        files: '(^|/)(?:test_.*|.*_test)\.py$|(^|/)tests?/.*\.py$'
         stages: [pre-push]
       - id: cargo-test
         name: cargo test

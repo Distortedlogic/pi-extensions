@@ -64,12 +64,12 @@ const REVIEW_SUBMISSION_SCHEMA = Type.Object(
 	{ additionalProperties: false },
 );
 
-type ReviewPolicy = Static<typeof REVIEW_POLICY_SCHEMA>;
-type ReviewItem = Static<typeof REVIEW_ITEM_SCHEMA>;
-type ReviewSubmission = Static<typeof REVIEW_SUBMISSION_SCHEMA>;
-type ReviewFinding = Static<typeof REVIEW_FINDING_SCHEMA>;
+export type ReviewPolicy = Static<typeof REVIEW_POLICY_SCHEMA>;
+export type ReviewItem = Static<typeof REVIEW_ITEM_SCHEMA>;
+export type ReviewSubmission = Static<typeof REVIEW_SUBMISSION_SCHEMA>;
+export type ReviewFinding = Static<typeof REVIEW_FINDING_SCHEMA>;
 
-interface ReviewConfig {
+export interface ReviewConfig {
 	repositoryRoot: string;
 	serverUrl: string;
 	owner: string;
@@ -80,13 +80,13 @@ interface ReviewConfig {
 	token: string;
 }
 
-interface ChangedFile {
+export interface ChangedFile {
 	status: string;
 	path: string;
 	oldPath?: string;
 }
 
-interface LineRange {
+export interface LineRange {
 	start: number;
 	end: number;
 }
@@ -107,14 +107,14 @@ interface ForgejoComment {
 	user?: ForgejoUser;
 }
 
-class StaleReviewError extends Error {
+export class StaleReviewError extends Error {
 	constructor(expected: string, actual: string) {
 		super(`Pull request head changed from ${expected} to ${actual}`);
 		this.name = "StaleReviewError";
 	}
 }
 
-class ForgejoClient {
+export class ForgejoClient {
 	private readonly apiServerRoot: string;
 	private readonly apiRoot: string;
 	private readonly token: string;
@@ -264,15 +264,18 @@ async function assertCommit(repositoryRoot: string, sha: string): Promise<void> 
 	await git(repositoryRoot, ["cat-file", "-e", `${sha}^{commit}`]);
 }
 
+export function assertExpectedHead(expectedHead: string, actualHead: string): void {
+	if (actualHead !== expectedHead) throw new StaleReviewError(expectedHead, actualHead);
+}
+
 async function assertCurrentHead(client: ForgejoClient, number: number, expectedHead: string): Promise<void> {
 	const pullRequest = await client.getPullRequest(number);
 	const actualHead = pullRequest.head?.sha?.toLowerCase();
 	if (!actualHead) throw new Error("Forgejo pull request response has no head SHA");
-	if (actualHead !== expectedHead) throw new StaleReviewError(expectedHead, actualHead);
+	assertExpectedHead(expectedHead, actualHead);
 }
 
-async function loadPolicy(repositoryRoot: string, baseSha: string): Promise<ReviewPolicy> {
-	const policySource = await git(repositoryRoot, ["show", `${baseSha}:.pi/review.yml`]);
+export function parseReviewPolicy(policySource: string): ReviewPolicy {
 	const policy = Value.Parse(REVIEW_POLICY_SCHEMA, parse(policySource));
 	const itemIds = new Set<string>();
 	for (const item of policy.items) {
@@ -282,7 +285,11 @@ async function loadPolicy(repositoryRoot: string, baseSha: string): Promise<Revi
 	return policy;
 }
 
-function parseChangedFiles(output: string): ChangedFile[] {
+async function loadPolicy(repositoryRoot: string, baseSha: string): Promise<ReviewPolicy> {
+	return parseReviewPolicy(await git(repositoryRoot, ["show", `${baseSha}:.pi/review.yml`]));
+}
+
+export function parseChangedFiles(output: string): ChangedFile[] {
 	const fields = output.split("\0");
 	if (fields.at(-1) === "") fields.pop();
 	const files: ChangedFile[] = [];
@@ -361,6 +368,20 @@ function addRange(ranges: Map<string, LineRange[]>, side: "old" | "new", path: s
 	ranges.set(key, current);
 }
 
+export function addChangedLineRanges(ranges: Map<string, LineRange[]>, file: ChangedFile, patch: string): void {
+	const hunkPattern = /^@@ -(\d+)(?:,(\d+))? \+(\d+)(?:,(\d+))? @@/;
+	for (const line of patch.split("\n")) {
+		const match = hunkPattern.exec(line);
+		if (!match) continue;
+		const oldStart = Number(match[1]);
+		const oldCount = match[2] === undefined ? 1 : Number(match[2]);
+		const newStart = Number(match[3]);
+		const newCount = match[4] === undefined ? 1 : Number(match[4]);
+		addRange(ranges, "old", file.oldPath ?? file.path, oldStart, oldCount);
+		addRange(ranges, "new", file.path, newStart, newCount);
+	}
+}
+
 async function getChangedLineRanges(
 	repositoryRoot: string,
 	mergeBase: string,
@@ -368,7 +389,6 @@ async function getChangedLineRanges(
 	files: ChangedFile[],
 ): Promise<Map<string, LineRange[]>> {
 	const ranges = new Map<string, LineRange[]>();
-	const hunkPattern = /^@@ -(\d+)(?:,(\d+))? \+(\d+)(?:,(\d+))? @@/;
 	for (const file of files) {
 		const patch = await git(repositoryRoot, [
 			"diff",
@@ -381,16 +401,7 @@ async function getChangedLineRanges(
 			"--",
 			...itemPaths([file]),
 		]);
-		for (const line of patch.split("\n")) {
-			const match = hunkPattern.exec(line);
-			if (!match) continue;
-			const oldStart = Number(match[1]);
-			const oldCount = match[2] === undefined ? 1 : Number(match[2]);
-			const newStart = Number(match[3]);
-			const newCount = match[4] === undefined ? 1 : Number(match[4]);
-			addRange(ranges, "old", file.oldPath ?? file.path, oldStart, oldCount);
-			addRange(ranges, "new", file.path, newStart, newCount);
-		}
+		addChangedLineRanges(ranges, file, patch);
 	}
 	return ranges;
 }
@@ -516,7 +527,7 @@ async function runReviewItem(
 	return submission;
 }
 
-function validateFindings(submission: ReviewSubmission, ranges: Map<string, LineRange[]>): ReviewFinding[] {
+export function validateFindings(submission: ReviewSubmission, ranges: Map<string, LineRange[]>): ReviewFinding[] {
 	const seen = new Set<string>();
 	for (const finding of submission.findings) {
 		const lineRanges = ranges.get(`${finding.side}\0${finding.file}`);

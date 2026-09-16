@@ -3,6 +3,7 @@ items:
   - id: correctness
     title: Correctness
     files:
+      - "agents.ts"
       - "src/**/*.{ts,tsx,js,jsx,py,rs,sh}"
       - "package.json"
       - "tsconfig.json"
@@ -11,6 +12,7 @@ items:
   - id: extension-api
     title: Extension API behavior
     files:
+      - "agents.ts"
       - "src/**/*.ts"
       - "package.json"
       - "AGENTS.yml"
@@ -19,6 +21,7 @@ items:
   - id: tests
     title: Tests
     files:
+      - "agents.ts"
       - "src/**/*.{ts,tsx,js,jsx,py,rs,sh}"
       - "test/**/*.{ts,tsx,js,jsx,py,rs,sh}"
       - "package.json"

@@ -7,6 +7,10 @@
 	"keywords": [
 		"pi-package"
 	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Distortedlogic/{{ project_name }}.git"
+	},
 	"engines": {
 		"node": ">=22.19.0"
 	},
@@ -17,9 +21,10 @@
 		"test:e2e": "node --experimental-strip-types --test test/e2e.test.ts",
 		"test:review": "node --experimental-strip-types --test test/review.test.ts",
 		"test:unit": "node --experimental-strip-types --test test/unit.test.ts",
-		"typecheck": "tsc"
+		"typecheck": "tsc --noEmit"
 	},
 	"files": [
+		"agents.ts",
 		"src",
 		"README.md"
 	],

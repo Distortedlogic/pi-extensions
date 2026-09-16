@@ -10,34 +10,6 @@ repos:
         types: [text]
         files: '\.(?:cjs|cts|js|jsx|json|jsonc|mjs|mts|ts|tsx)$'
 
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.16.7
-    hooks:
-      - id: ruff-check
-        args:
-          - --fix
-        types_or: [python, pyi]
-      - id: ruff-format
-        types_or: [python, pyi]
-
-  - repo: https://github.com/doublify/pre-commit-rust
-    rev: v1.0
-    hooks:
-      - id: fmt
-        types: [rust]
-        files: '\.rs$'
-      - id: clippy
-        args: [--all-targets, --all-features, --, -D, warnings]
-        types: [file]
-        files: '(^|/)(?:Cargo\.toml|.*\.rs)$'
-        stages: [pre-push]
-
-  - repo: https://github.com/koalaman/shellcheck-precommit
-    rev: v0.11.0
-    hooks:
-      - id: shellcheck
-        types: [shell]
-
   - repo: https://github.com/gitleaks/gitleaks
     rev: v8.30.0
     hooks:
@@ -70,8 +42,8 @@ repos:
     rev: 0.38.0
     hooks:
       - id: check-jsonschema
-        name: validate AGENTS.yml preload
-        args: [--schemafile, .pi/schemas/context-preload.schema.json]
+        name: validate AGENTS.yml
+        args: [--schemafile, .pi/schemas/AGENTS.schema.json]
         types: [yaml]
         files: '^AGENTS\.yml$'
       - id: check-jsonschema
@@ -92,7 +64,7 @@ repos:
         language: system
         pass_filenames: false
         types: [text]
-        files: '^(?:\.forgejo/.*\.ts|package(?:-lock)?\.json|tsconfig\.json|src/.*\.(?:cjs|cts|js|jsx|mjs|mts|ts|tsx)|test/.*\.(?:cjs|cts|js|jsx|mjs|mts|ts|tsx))$'
+        files: '^(?:\.forgejo/.*\.ts|agents\.ts|package(?:-lock)?\.json|tsconfig\.json|src/.*\.(?:cjs|cts|js|jsx|mjs|mts|ts|tsx)|test/.*\.(?:cjs|cts|js|jsx|mjs|mts|ts|tsx))$'
         stages: [pre-push]
       - id: npm-test
         name: npm test
@@ -100,21 +72,5 @@ repos:
         language: system
         pass_filenames: false
         types: [text]
-        files: '^(?:\.forgejo/.*\.ts|package(?:-lock)?\.json|src/.*\.(?:cjs|cts|js|jsx|mjs|mts|ts|tsx)|test/.*\.(?:cjs|cts|js|jsx|mjs|mts|ts|tsx))$'
-        stages: [pre-push]
-      - id: pytest
-        name: pytest
-        entry: python -m pytest
-        language: system
-        pass_filenames: false
-        types: [python]
-        files: '(^|/)(?:test_.*|.*_test)\.py$|(^|/)tests?/.*\.py$'
-        stages: [pre-push]
-      - id: cargo-test
-        name: cargo test
-        entry: cargo test --all-targets --all-features
-        language: system
-        pass_filenames: false
-        types: [file]
-        files: '(^|/)(?:Cargo\.toml|.*\.rs)$'
+        files: '^(?:\.forgejo/.*\.ts|agents\.ts|package(?:-lock)?\.json|src/.*\.(?:cjs|cts|js|jsx|mjs|mts|ts|tsx)|test/.*\.(?:cjs|cts|js|jsx|mjs|mts|ts|tsx))$'
         stages: [pre-push]

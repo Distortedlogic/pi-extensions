@@ -1,99 +1,91 @@
 # Simplify Extension Runtime Orchestration
 
-## WU-01: Use Native Pi Package Discovery
+## WU-01: Replace Package Directory Scans
 
-- [ ] Replace the physical npm, Git, and extension-directory scans in `pi-modes/index.ts` with `SettingsManager.create(ctx.cwd, agentDir)` and `DefaultPackageManager.listConfiguredPackages()`, resolve each defined `installedPath` to its root `AGENTS.yml`, preserve user-before-project source order, include project package sources only for a trusted project, include the extension package’s own `AGENTS.yml` explicitly, and keep the trusted project root `AGENTS.yml` last.
+- [ ] In `pi-modes/index.ts`, replace manual npm, Git, and extension-directory scanning with `SettingsManager.create(ctx.cwd, agentDir)` and `DefaultPackageManager.listConfiguredPackages()`, load the extension’s own `AGENTS.yml` first, then installed user package `AGENTS.yml` files, installed trusted-project package `AGENTS.yml` files, and the trusted project root `AGENTS.yml`, and skip entries without an installed path or root `AGENTS.yml`.
 
-- [ ] Replace the equivalent physical package scan in `pi-prompts/src/index.ts` with the same direct use of `SettingsManager` and `DefaultPackageManager`, retain `PACKAGE_AGENTS_PATH` for direct development loads, skip entries without an installed path or root `AGENTS.yml`, and remove all npm-root, Git-root, extension-root, manifest-glob, path-normalization, and stale-directory discovery code.
+- [ ] In `pi-prompts/src/index.ts`, replace the equivalent directory and `package.json` scan with the same `SettingsManager` and `DefaultPackageManager` flow, retain `PACKAGE_AGENTS_PATH` for direct extension loads, and preserve user-package, project-package, and project-root source precedence.
 
-- [ ] Remove scanner-only imports from both extensions, including `globSync`, package-manifest `dirname` conversion, and `normalize`, and do not add a shared helper package or another package-discovery abstraction.
+- [ ] Remove scanner-only imports and code from both extensions, including `globSync`, package-root arrays, manifest-path conversion, recursive package searches, `dirname` used only for manifest conversion, and `normalize`.
 
-- [ ] Move `typebox` from `dependencies` to `peerDependencies` with the Pi-provided version contract in `pi-context-preload`, `pi-modes`, and `pi-prompts`, update each existing lockfile, and leave only extension-owned runtime libraries in `dependencies`.
+- [ ] Rewrite the prompt package-source E2E fixture to configure its local fixture package through Pi settings instead of placing an unconfigured directory under `agentDir/npm/node_modules`.
 
-## WU-02: Simplify Context Configuration Loading
+## WU-02: Correct Runtime Dependencies
 
-- [ ] Remove the outer `cachedConfiguration` state from `pi-context-preload/index.ts`, load project configuration into a local `session_start` constant, make `collectPreload` require a `Configuration`, and remove its optional-configuration early return.
+- [ ] Move `typebox` from `dependencies` to `peerDependencies` in `pi-context-preload`, `pi-modes`, and `pi-prompts`, use the Pi-provided peer contract, and update each existing lockfile without changing other dependency versions.
 
-- [ ] Replace `configurationSourceError`, `readYamlSource`, `validateConfiguration`, and `readConfiguration` with one source-aware preset loader that reads YAML, validates it with `Value.Parse(configurationSchema, value)`, and reports the source path for parse and validation failures.
+## WU-03: Simplify Context Configuration Loading
 
-- [ ] Simplify `loadProjectConfiguration` to read the known `resolve(cwd, "AGENTS.yml")` path directly, treat `ENOENT` as missing configuration, perform the direct `pi-context-preload` lookup inline, and remove the exact-file `globby` search, configuration metadata checks, configuration size checks, `getOwnedConfiguration`, and its one-use object helper.
+- [ ] Remove the outer `cachedConfiguration` variable from `pi-context-preload/index.ts`, keep the loaded configuration local to `session_start`, make `collectPreload` require `Configuration`, and remove its optional-configuration early return.
 
-- [ ] Refactor recursive preset resolution to accept an already-validated `Configuration` instead of a fake root configuration path and optional configuration value, load files only for inherited presets, and retain cycle detection, absolute inherited-pattern validation, merge order, and shared structural validation.
+- [ ] Replace `configurationSourceError`, `readYamlSource`, `validateConfiguration`, and `readConfiguration` with one source-aware YAML loader that validates with `Value.Parse(configurationSchema, value)` and preserves source-scoped parse and validation errors.
 
-## WU-03: Simplify Context Collection and Rendering
+- [ ] Change `loadProjectConfiguration` to use the exact `resolve(cwd, "AGENTS.yml")` path, perform the direct `pi-context-preload` lookup inline, preserve missing-file and configured size-limit behavior, and remove the exact-file `globby` search, `getOwnedConfiguration`, and its one-use object helper.
 
-- [ ] Validate each final merged context name once, construct its conventional `facts.ts` and `index.md.njk` paths directly, and remove `isPathInside`, `resolveContextSourcePaths`, duplicate name validation, and the context-file `stat` preflight.
+- [ ] Refactor preset resolution to accept an already-validated root `Configuration`, load files only for inherited presets, and preserve cycle detection, inherited absolute-pattern validation, source order, and schema validation.
 
-- [ ] Fold `contextSourceError` and the one-use `renderContextSource` function into the context-loading flow while preserving operation-specific import, execution, and render errors, undefined-facts skipping, strict Nunjucks rendering, empty-output rejection, and deterministic context order.
+## WU-04: Simplify Context Collection
 
-- [ ] Replace the two-pass binary-selection pipeline with one concurrent file read per candidate, run binary detection against the loaded buffer, skip implicit binaries, allow explicitly selected images, reject other explicitly selected binaries, decode text once, and calculate actual total bytes after all reads without a shared mutable concurrent counter.
+- [ ] Validate each merged context name once, construct its `facts.ts` and `index.md.njk` paths directly, and remove `isPathInside`, `resolveContextSourcePaths`, duplicate context-name validation, and the separate context-file stat preflight while preserving source-scoped failures.
 
-- [ ] Replace directory-first candidate sorting with one lexical relative-path sort while preserving ignore rules, explicit exclusions, per-file limits, total limits, image blocks, text headings, and context-before-file output order.
+- [ ] Fold `contextSourceError` and the one-use `renderContextSource` function into the context-loading flow while preserving import, execution, render, undefined-facts, strict-template, empty-output, and context-order behavior.
 
-- [ ] Remove `PRELOAD.md` generation, including `PRELOAD_FILE`, `serializePreloadBlocks`, the runtime `writeFile` call, image-to-Markdown serialization, generated snapshot exclusions that no longer serve another feature, and all return or test behavior used only by that artifact.
+- [ ] Replace the two-pass binary pipeline with one file read per candidate, run binary detection against the loaded buffer, preserve implicit-binary skipping and explicit image handling, and compute actual selected bytes after concurrent reads without a shared mutable byte counter.
 
-- [ ] Remove duplicate context-preload error reporting by retaining status cleanup in `finally` and allowing one thrown extension error instead of notifying the same failure and rethrowing it.
+- [ ] Report a context-preload startup failure once through Pi’s extension error path while retaining status cleanup in `finally`.
 
-## WU-04: Simplify Mode Loading and State
+## WU-05: Simplify Mode Loading
 
-- [ ] Replace the side-effecting `loadModes` function with one loader that reads, parses, directly extracts, and validates a `pi-modes` section and returns `Configuration | undefined`, then merge returned entries in the session handler and let invalid configuration propagate through Pi’s extension error path.
+- [ ] Replace the side-effecting `loadModes` function with one loader that reads, parses, directly extracts, and validates `pi-modes` configuration and returns `Configuration | undefined`, then merge returned entries in the session handler.
 
-- [ ] Remove `isObject`, `sourceError`, `getOwnedConfiguration`, the `optional` parameter, custom `ENOENT` reporting, map mutation from inside the loader, and UI or console error swallowing from `pi-modes/index.ts`.
+- [ ] Remove `isObject`, `sourceError`, `getOwnedConfiguration`, the loader’s `optional` argument, map mutation inside the loader, and UI or console error swallowing while preserving source order, mode cycling, `pi-modes:set`, suffix insertion, and listener cleanup.
 
-- [ ] Make the no-suffix `exec` mode an unconditional built-in first mode, append configured modes after it, hide the widget whenever the selected suffix is empty, remove the configured `none: ""` entry, and preserve Shift+Tab cycling, `pi-modes:set`, suffix insertion, and listener cleanup.
+## WU-06: Simplify Prompt Loading and Choice State
 
-## WU-05: Simplify Prompt Loading and Choice State
+- [ ] Replace separate `promptSources` and `promptChainMaps` state with one session result containing validated sources, chains, generated prompt paths, and declared-name-to-command-name mappings.
 
-- [ ] Replace separate `promptSources` and `promptChainMaps` state with one session result that contains validated sources, declared chains, generated prompt paths, and the declared-name-to-generated-command-name mapping.
+- [ ] Generate prompt files once after session configuration is loaded, cache the generated paths for `resources_discover`, and remove repeated prompt-file generation from each discovery event.
 
-- [ ] Generate prompt files once after session configuration is loaded and validated, cache only the resulting paths for `resources_discover`, and remove repeated hashing, directory preparation, and writes from each discovery event.
+- [ ] Return an explicit declared-name-to-command-name mapping from prompt generation, use it for chain members, and remove numeric-prefix reverse parsing through `declaredPromptName`.
 
-- [ ] Change prompt generation to return an explicit declared-name-to-command-name mapping, use that mapping to resolve chain members, and remove numeric-prefix reverse parsing through `declaredPromptName`.
+- [ ] Replace the prompt-choice helper model with one shape containing `kind`, `name`, and `commandNames`, update prompt cycling and chain arming to use it, and remove `choiceName` and `firstCommandName` without changing the `input`, `before_agent_start`, and `agent_start` lifecycle.
 
-- [ ] Replace the prompt-choice union helpers with one choice shape containing `kind`, `name`, and `commandNames`, update cycling, widget text, draft handling, and chain arming to use that shape directly, and remove `choiceName` and `firstCommandName` without changing the `input`, `before_agent_start`, and `agent_start` chain lifecycle.
+- [ ] Inline the direct `pi-prompts` object lookup in `parsePromptsYaml`, remove `getOwnedConfiguration` and its one-use object helper, and preserve structural validation, duplicate-name detection, undeclared chain-member detection, and source-scoped errors.
 
-- [ ] Inline the direct top-level `pi-prompts` object check in `parsePromptsYaml`, remove `getOwnedConfiguration` and its one-use object helper, and retain structural validation, duplicate prompt detection, undeclared chain-member detection, source order, and source-scoped errors.
+## WU-07: Remove Low-Value Context Tests
 
-## WU-06: Reduce Context-Preload Test Orchestration
+- [ ] Remove the unit-test `cachedConfigurations` map, the aliased collection wrapper, and the four tests that claim to cover cached configuration, missing `AGENTS.yml`, a missing owned key, and no reread after caching even though they inject configuration instead of exercising project loading.
 
-- [ ] Remove the unit-test `cachedConfigurations` map, the aliased collection wrapper, and the tests named `collectPreload uses cached configuration and ignores unrelated top-level keys`, `collectPreload returns undefined when AGENTS.yml is absent`, `collectPreload returns undefined when AGENTS.yml has no owned key`, and `collectPreload does not reread AGENTS.yml after configuration is cached`, because those tests inject configuration and do not exercise project configuration loading.
+- [ ] Pass `Configuration` directly to the remaining collection unit tests, remove the repeated second collection from the generated-and-ignored-files case, and retain direct coverage of selected blocks, exclusions, inheritance, context order, schema failures, binary handling, images, unsafe names, and byte limits.
 
-- [ ] Update remaining collection tests to pass `Configuration` directly, remove `PRELOAD.md` snapshot helpers and assertions, remove the repeated second collection from the generated-and-ignored-files test, and retain direct assertions for selected text blocks, image blocks, exclusions, ordering, and byte limits.
+- [ ] Replace the regular-context-entry-file matrix with one missing-source case, reduce source-scoped context failures to one import, invalid-export, execution, and render case, and remove historical Dioxus baseline comparisons while retaining explicit byte budgets.
 
-- [ ] Replace the regular-convention-entry-file matrix with one missing-context-source error case, reduce source-scoped context failures to one case for import, invalid export, execution, and render, and keep unsafe-name, unselected-context, undefined-facts, inheritance, schema, binary, image, and size-limit coverage.
+- [ ] Remove the package-manifest and reference-file existence test and the full temporary Cargo-workspace E2E, consolidate Dioxus metadata scenarios into a table-driven unit test, and retain deterministic metadata and template behavior coverage.
 
-- [ ] Consolidate the Dioxus package-selection scenarios into one table-driven test, remove historical baseline-byte comparisons while retaining explicit maximum budgets, and remove the package-manifest and reference-file existence test that does not validate the produced package.
+- [ ] Keep process-level context tests for valid trusted loading, invalid owned configuration, and untrusted project behavior, and remove separate process cases already covered by direct schema or unit tests.
 
-- [ ] Reduce context-preload process-level tests to valid trusted loading, invalid owned configuration, and untrusted project behavior, remove the full temporary Cargo-workspace E2E and redundant missing, malformed, unknown-field, generated-snapshot, and Dioxus integration process starts, and keep direct schema or deterministic unit coverage for removed process cases.
+## WU-08: Remove Low-Value Prompt Tests
 
-## WU-07: Reduce Prompt Test Orchestration
+- [ ] Consolidate invalid prompt bodies, empty chains, non-string chain members, and unknown prompt fields into one table-driven validation test while retaining separate malformed YAML, undeclared chain-member, duplicate-name, valid parsing, and prompt-generation tests.
 
-- [ ] Rewrite the prompt package-source E2E fixture as a Pi-configured local package instead of placing an unconfigured directory under `agentDir/npm/node_modules`, so the test exercises `DefaultPackageManager.listConfiguredPackages()` rather than stale physical-directory discovery.
+- [ ] Remove the stand-alone tests for first selection, no-message shortcut behavior, empty and non-empty editor writes, widget writes, and single-prompt toggling because retained cycle and draft-preservation cases cover those results.
 
-- [ ] Consolidate invalid prompt bodies, empty chains, non-string chain members, and unknown prompt fields into one table-driven structural-validation test while keeping separate malformed YAML, undeclared chain-member, duplicate-name, valid parsing, and prompt-file generation tests.
+- [ ] Merge the numbered-prompt no-chain cases, remove the obsolete undeclared-numbered-chain and failed-preflight regression cases, and retain declared-chain ordering, changed-command, extension-input, dynamic-catalogue, empty-catalogue, and draft-preservation coverage.
 
-- [ ] Remove the stand-alone tests named `selects the first prompt on the first cycle`, `Alt+P changes the editor without sending a message`, `writes exact editor text for empty and non-empty drafts`, `writes the prompt widget for selections and clears it for no prompt`, and `toggles a single prompt through the no-prompt state` because complete cycle and draft-preservation cases already cover those behaviors.
+- [ ] Consolidate lifecycle reset assertions and reduce `createHarness` and its helper types to the Pi methods and recorded effects used by the retained tests.
 
-- [ ] Merge the two numbered-prompt no-chain tests into one case, remove the obsolete tests named `does not arm an undeclared numbered-path chain` and `does not infer chains after a failed preflight`, and retain explicit declared-chain ordering, changed-first-command, extension-input, dynamic-catalogue, empty-catalogue, and draft-preservation behavior.
+- [ ] Remove the separate Pi load smoke test and reduce the remaining prompt E2E to configured package prompts, trusted and untrusted project prompts, native prompt discovery, and declared chain follow-up order.
 
-- [ ] Consolidate session-start, input, and shutdown reset assertions into the smallest set that proves state and widget cleanup, then shrink `createHarness` and its helper interfaces to only the public Pi methods and recorded effects used by the retained high-value cases.
+## WU-09: Remove Root Package Residue
 
-- [ ] Remove the separate `loads in Pi` smoke test, reduce the remaining E2E to configured package prompts, trusted and untrusted project prompts, native prompt discovery, and declared chain follow-up order, and remove source-corruption cache checks, exhaustive prompt metadata checks, full-catalogue cycling, and duplicate widget wording assertions.
+- [ ] Remove the root `package-lock.json`, which has no dependency graph after removal of the root schema implementation.
 
-## WU-08: Remove Remaining Root and Package Bloat
+- [ ] Remove imports, constants, types, test helpers, and package dependencies made unreachable by the preceding changes.
 
-- [ ] Remove the root `package-lock.json` because the private root package has no dependencies, development dependencies, or executable scripts, and confirm that no root schema generator, merged schema, extension dependency, Git SHA dependency, TypeBox dependency, YAML dependency, or schema-check command remains.
+## WU-10: Verify the Implementations
 
-- [ ] Remove imports, constants, types, test helpers, and package dependencies made unreachable by the simplifications, use Biome’s existing formatting instead of manual formatting rules, and do not modify READMEs, skills, or unrelated agent-context files.
+- [ ] Run the existing `pi-context-preload` typecheck, Biome check, unit tests, and E2E tests, then complete a clean full install, clean production-only install, and production imports of `agents.ts` and `index.ts` without provider credentials.
 
-## WU-09: Verify and Commit Independently
+- [ ] Complete clean full and production-only installs for `pi-modes`, then load `agents.ts` and `index.ts` with Node TypeScript support without provider credentials.
 
-- [ ] Run the existing `pi-context-preload` typecheck, Biome check, unit tests, and E2E tests, then run a clean full install, a clean production-only install, and production imports of `agents.ts` and `index.ts` without provider credentials.
-
-- [ ] Load `pi-modes/agents.ts` and `pi-modes/index.ts` with Node TypeScript support after both clean full and production-only installs, verify direct package and project mode loading manually through the existing public extension behavior, and do not add a permanent test suite without explicit approval.
-
-- [ ] Run the existing `pi-prompts` typecheck, Biome check, unit tests, and E2E tests, then run a clean full install, a clean production-only install, and production imports of `agents.ts` and `src/index.ts` without provider credentials.
-
-- [ ] Verify that configured package `AGENTS.yml` sources follow Pi settings instead of filesystem leftovers, project-owned package and root configuration is excluded when untrusted, direct package keys remain the only accepted configuration shape, unrelated top-level keys remain valid, and no removed scanner, wrapper path, generated preload artifact, or root orchestration reference remains in executable code or retained fixtures.
-
-- [ ] Commit the verified changes separately in `pi-context-preload`, `pi-modes`, `pi-prompts`, and the root repository with minimal accurate messages, stage only files changed for this task, and do not install or push the extensions unless the user separately requests an active installation or remote update.
+- [ ] Run the existing `pi-prompts` typecheck, Biome check, unit tests, and E2E tests, then complete a clean full install, clean production-only install, and production imports of `agents.ts` and `src/index.ts` without provider credentials.

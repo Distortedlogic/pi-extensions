@@ -1,0 +1,4 @@
+preload:
+  extends:
+    - "pi-extension"
+  files: []

@@ -16794,20 +16794,20 @@ export function wrapRegisteredTools(registeredTools: RegisteredTool[], runner: E
 
 File: TREE.txt
 
-/tmp/pi-context-preload-tree-hfeNGH/paths.txt
+/tmp/pi-context-preload-tree-76EbTA/paths.txt
 ├── .pi
 ├── skills
 │   └── pi-extension-authoring
 │       └── SKILL.md
 ├── .tasks
-│   ├── desc-consolidate-agents-yml.md
+│   ├── desc-consolidate-repository-config-into-agents-yml.md
 │   └── desc-pi-extension-templating-and-precommit.md
 ├── template
 │   ├── src
 │   │   └── index.ts
 │   ├── test
+│   ├── AGENTS.yml
 │   ├── biome.json
-│   ├── CONTEXT_PRELOAD.yml
 │   ├── package.json.jinja
 │   ├── README.md.jinja
 │   └── tsconfig.json

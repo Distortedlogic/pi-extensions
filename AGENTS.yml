@@ -12,7 +12,7 @@ pi-preload:
     - "./pi-sync"
     - "./pi-tasks"
     - "./pi-tree"
-  files:
+  includes:
     - "**/src/**/*.ts"
     - "**/package.json"
     - "copier.yml"

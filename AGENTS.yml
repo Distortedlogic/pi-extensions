@@ -1,6 +1,0 @@
-pi-context-preload:
-  extends:
-    - "pi-extension"
-  files:
-    - "**/src/**/*.ts"
-    - "**/package.json"

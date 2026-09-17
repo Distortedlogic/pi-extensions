@@ -1,7 +1,7 @@
 pi-preload:
-  extends:
+  presets:
     - "pi-extension"
-    - "./pi-blend"
+  extends:
     - "./pi-compress"
     - "./pi-env"
     - "./pi-modes"
@@ -14,3 +14,5 @@ pi-preload:
   files:
     - "**/src/**/*.ts"
     - "**/package.json"
+    - "copier.yml"
+    - "template/**/*"

@@ -34,8 +34,8 @@
 
 ## Work Unit 5: Release and Reinstall
 
-- [ ] Commit each changed repository independently with a minimal accurate message and push its default branch to the configured remote.
+- [x] Commit each changed repository independently with a minimal accurate message and push its default branch to the configured remote.
 
-- [ ] Remove and reinstall every changed Pi package from its remote source with `pi remove` and `pi install`, then run `pi list` and confirm that each package appears exactly once.
+- [x] Remove and reinstall every changed Pi package from its remote source with `pi remove` and `pi install`, then run `pi list` and confirm that each package appears exactly once.
 
-- [ ] Reload Pi and verify direct top-level package and trusted-project configuration for the affected extensions without relying on the removed wrapper.
+- [x] Reload Pi and verify direct top-level package and trusted-project configuration for the affected extensions without relying on the removed wrapper.

@@ -4,7 +4,7 @@ default_stages:
 
 repos:
   - repo: https://github.com/biomejs/pre-commit
-    rev: v2.5.13
+    rev: v2.5.14
     hooks:
       - id: biome-check
         types: [text]

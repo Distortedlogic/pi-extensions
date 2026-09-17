@@ -1,6 +1,16 @@
 pi-preload:
   extends:
     - "pi-extension"
+    - "./pi-blend"
+    - "./pi-compress"
+    - "./pi-env"
+    - "./pi-modes"
+    - "./pi-preload"
+    - "./pi-prompts"
+    - "./pi-steering"
+    - "./pi-sync"
+    - "./pi-tasks"
+    - "./pi-tree"
   files:
     - "**/src/**/*.ts"
     - "**/package.json"

@@ -21,11 +21,29 @@
 			"type": "object",
 			"additionalProperties": false,
 			"properties": {
+				"pi-context-preload": {
+					"$ref": "#/$defs/contextPreload"
+				},
 				"pi-modes": {
 					"$ref": "#/$defs/modes"
 				},
 				"pi-prompts": {
 					"$ref": "#/$defs/prompts"
+				}
+			}
+		},
+		"contextPreload": {
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"extends": {
+					"$ref": "#/$defs/stringList"
+				},
+				"files": {
+					"$ref": "#/$defs/stringList"
+				},
+				"contexts": {
+					"$ref": "#/$defs/stringList"
 				}
 			}
 		},
@@ -79,6 +97,13 @@
 				"body": {
 					"type": "string"
 				}
+			}
+		},
+		"stringList": {
+			"type": "array",
+			"items": {
+				"type": "string",
+				"minLength": 1
 			}
 		}
 	}

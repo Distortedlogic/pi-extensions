@@ -57,20 +57,26 @@ const result = await compressRange(pi, ctx, {
 - Cancelled review, cancelled navigation, or an invalidated range means no continuation.
 - A successful range summary replaces that range only in active context. Original entries remain on the source branch.
 
-## `pi-preload`
+## `pi-context-preload`
 
-**Project configuration:** root `<cwd>/.preloadignore`
+**Project configuration:** root `<cwd>/AGENTS.yml`
 
-```gitignore
-/*
-!/src/
-!/package.json
+```yaml
+pi-context-preload:
+  extends:
+    - pi-extension
+  contexts:
+    - dioxus
+  files:
+    - package.json
+    - src/**/*.ts
+    - "!test/**/*"
 ```
 
-- Project files are selected by default. `.gitignore` and `.preloadignore` remove files from preload context.
-- Generated preload and tree files and package lockfiles are excluded.
+- `extends` loads package presets first. `contexts` selects package-owned dynamic sources. `files` uses ordered project globs.
+- Dynamic context appears first, selected file blocks follow, and generated `TREE.txt` is last.
 - Treat all blocks as repository context, not as new work requests.
-- Use `preload-ignore-authoring` before creating, changing, or auditing `.preloadignore`.
+- Use `context-preload-authoring` before creating, changing, or auditing `pi-context-preload`.
 - Use `dioxus-specialized` only for the Dioxus tasks named in that skill description.
 - Run `/reload` after configuration changes.
 

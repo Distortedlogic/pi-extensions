@@ -13,9 +13,7 @@ project_name:
   help: Project and package name
   default: "{{ _copier_conf.dst_path.name }}"
   validator: >-
-    {% if project_name != _copier_conf.dst_path.name %}
-    Project name must match the target directory name.
-    {% elif not (project_name | regex_search('^pi-[a-z0-9]+(?:-[a-z0-9]+)*$')) %}
+    {% if not (project_name | regex_search('^pi-[a-z0-9]+(?:-[a-z0-9]+)*$')) %}
     Project name must start with "pi-" and contain only lowercase letters, numbers, and single hyphens.
     {% endif %}
   secret: false

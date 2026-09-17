@@ -1,5 +1,7 @@
 _subdirectory: template
 _answers_file: .copier-answers.yml
+_tasks:
+  - "pre-commit install --hook-type pre-commit --hook-type pre-push"
 _skip_if_exists:
   - src/index.ts
   - test/unit.test.ts

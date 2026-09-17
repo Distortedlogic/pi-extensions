@@ -2,6 +2,7 @@ pi-preload:
   presets:
     - "pi-extension"
   extends:
+    - "./pi-blend"
     - "./pi-compress"
     - "./pi-env"
     - "./pi-modes"

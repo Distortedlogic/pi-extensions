@@ -12,7 +12,7 @@ test("uses direct top-level AGENTS.yml extension configuration", async () => {
 	const source = await readFile(new URL("../AGENTS.yml", import.meta.url), "utf8");
 	const document = parse(source) as Record<string, unknown>;
 
-	assert.deepEqual(document["pi-context-preload"], {
+	assert.deepEqual(document["pi-preload"], {
 		extends: ["pi-extension"],
 		files: ["src/**/*.ts", "package.json"],
 	});

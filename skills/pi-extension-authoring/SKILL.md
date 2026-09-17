@@ -59,7 +59,7 @@ Install and run local package tools through npm scripts. Do not guess a CLI path
 
 ## Preload manifest
 
-Use the top-level `pi-context-preload` section in the generated `AGENTS.yml` as the baseline. It preloads runtime TypeScript, package metadata, and the common Pi extension references. It intentionally does not preload `README.md`, test TypeScript files, or lock files.
+Use the top-level `pi-preload` section in the generated `AGENTS.yml` as the baseline. It preloads runtime TypeScript, package metadata, and the common Pi extension references. It intentionally does not preload `README.md`, test TypeScript files, or lock files.
 
 Add only source and Pi files needed by that extension. Do not preload lock files.
 

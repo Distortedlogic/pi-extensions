@@ -6,7 +6,7 @@
 
 - [ ] Remove the preload `AGENTS.yml` schema and reader, `agents.ts`, preset loading, configuration-selected context rendering, obsolete presets, their tests, and their Nunjucks, YAML, and TypeBox dependencies; retain the standalone Dioxus reference assets and skill plus the existing file decoding, image, ordering, byte-limit, trust, and timeout behavior.
 
-- [ ] Rename the legacy preload repository, package metadata, source constants, custom message type, errors, tests, fixtures, schemas, documentation, workflows, and package references to `pi-preload`, rename the context authoring skill to `preload-ignore-authoring` and make it edit `.preloadignore`, and delete every alias, fallback reader, compatibility path, and tracked use of the legacy identifier.
+- [ ] Rename the legacy preload repository, package metadata, source constants, custom message type, errors, tests, fixtures, schemas, documentation, workflows, and package references to `pi-preload`, rename the context authoring skill to `preload-ignore-authoring` and make it edit `.preloadignore`, and support only the final names and interfaces by deleting every alias, legacy reader or writer, dual-name branch, compatibility path, and tracked use of the legacy identifier.
 
 ## Work Unit 2: Implement Hierarchical Ignore Traversal
 
@@ -32,7 +32,7 @@
 
 - [ ] Delete tree and preload behavior from tracked `AGENTS.yml` files, schemas, fixtures, examples, and the Copier template without adding replacement configuration keys, then add `.treeignore` and `.preloadignore` activation files to the meta-workspace root, the extension template, and every direct child extension repository.
 
-- [ ] Update the existing `pi-tree` tests for absent and exact-root activation, nested precedence and sibling isolation, bundled-rule override, traversal pruning, CWD confinement, untracked child repositories, and `.pi/TREE.md`; update the existing `pi-preload` tests for the same policy behavior, independent activation, retained file processing, and `.pi/PRELOAD.md`.
+- [ ] Update the existing `pi-tree` tests for absent and exact-root activation, nested precedence and sibling isolation, bundled-rule override, traversal pruning, CWD confinement, untracked child repositories, and `.pi/TREE.md`; update the existing `pi-preload` tests for the same policy behavior, independent activation, retained file processing, and `.pi/PRELOAD.md`; delete obsolete configuration, legacy-name, and old-output fixtures and assertions instead of retaining compatibility coverage.
 
 - [ ] Update the two package READMEs, package manifests, lockfiles, repository metadata, extension inventory, authoring documentation, and existing integration fixtures to describe only root activation files, nested ignore inheritance, CWD collection, and project-level `.pi` snapshots.
 
@@ -42,6 +42,6 @@
 
 - [ ] Rename the preload repositories on Forgejo and GitHub to `pi-preload`, update their local remote URLs, commit each changed extension repository and the meta-repository separately, and push every extension commit before installation.
 
-- [ ] Use Pi package commands directly, without a custom migration script, to remove the active legacy preload source and stale `pi-tree` installation, install `git:github.com/Distortedlogic/pi-preload` and `git:github.com/Distortedlogic/pi-tree`, and confirm that active settings and installed package state contain only these corrected remote sources.
+- [ ] After all implementation commits are validated and pushed, perform one manual active-state cutover in real time with Pi package commands: remove the active legacy preload source and stale `pi-tree` installation, install `git:github.com/Distortedlogic/pi-preload` and `git:github.com/Distortedlogic/pi-tree`, and confirm that settings and installed package state contain only these corrected remote sources; do not add migration code, dual package entries, fallback identifiers, or a reusable migration script.
 
 - [ ] Reload Pi and verify the four root-marker combinations, bundled-root-nested rule precedence in the `pi-extensions` workspace, direct startup in one child repository, no traversal outside the session CWD, snapshots at `.pi/TREE.md` and `.pi/PRELOAD.md`, and no remaining legacy preload identifier in tracked files, remotes, settings, installed packages, or runtime messages.

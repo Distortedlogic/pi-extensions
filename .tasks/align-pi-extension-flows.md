@@ -25,6 +25,12 @@ Align all owned custom Pi extensions with the shared package, runtime, configura
   - [ ] Update the extension-authoring and pi-preload-authoring skills to produce the same package and configuration structure.
   - [ ] Render a new extension from the template and pass its existing typecheck, lint, unit, review, and end-to-end commands.
 
+- [ ] Apply the finalized baseline to the configuration extensions
+  - [ ] Apply the final package, TypeScript, test-script, lockfile, and ignore-file baseline to pi-preload without changing its validated preload behavior.
+  - [ ] Apply the same baseline to pi-modes without changing its validated mode behavior or adding a new test suite.
+  - [ ] Apply the same baseline to pi-prompts without changing its validated prompt and chain behavior.
+  - [ ] Run each extension's existing `check` command and credential-free production entry load.
+
 - [ ] Align pi-sync with the shared extension conventions
   - [ ] Move the real extension registration to `src/index.ts`, point the Pi manifest at it, and remove the root forwarding entry.
   - [ ] Replace the existing Vitest runner with `node:test` while preserving unit, security, recovery, transaction, package, and two-machine end-to-end coverage.
@@ -59,6 +65,7 @@ Align all owned custom Pi extensions with the shared package, runtime, configura
   - [ ] Migrate the existing Vitest suite to `node:test`, split unit and end-to-end commands, and make `check` run both.
 
 - [ ] Align pi-workstream against the validated pi-compress commit
+  - [ ] Apply the shared package, compiler, Pi peer, lockfile, and test-script conventions.
   - [ ] Point package exports and Pi registration at the real `src/index.ts` entry and update the remote-pinned pi-compress dependency.
   - [ ] Replace the duplicated range-compression path with the public `compressRange` API and remove obsolete compression channels, custom types, and readers.
   - [ ] Replace legacy peer installation with `npm ci`, migrate existing tests to `node:test`, and use a deterministic offline provider for end-to-end coverage.

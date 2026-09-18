@@ -7,6 +7,8 @@
 - Do not install extensions from a local path.
 - do not do edits to `~/.pi` to modify extension behaviors.
 - u can review pi coding agent source code via the clone in ~/3rd.
+- keep all testing minimal n targeted at the critical points for owned functionality
+- at the very end of completed work, push n `pi update` the extensions you changed
 
 ## Testing
 

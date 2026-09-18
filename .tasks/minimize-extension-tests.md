@@ -20,9 +20,8 @@ Update the available Pi extension test suites so each retained test protects cri
 
 - [ ] Reduce `pi-preload` tests while preserving preload safety
   - [ ] Keep configuration merging, file selection, canonical output, binary rejection, image ordering, context ordering, nested references, cycle rejection, byte limits, project trust, and reload deduplication.
-  - [ ] Replace repeated unsafe-name, context-failure, and Dioxus cases with representative table entries for each distinct rule.
+  - [ ] Remove duplicate unsafe-name, context-failure, and Dioxus cases while retaining one case for each distinct rule.
   - [ ] Replace complete Dioxus document comparisons with checks for core content and selected capability fragments.
-  - [ ] Add one unit case that verifies an included symlink cannot preload content outside the project.
   - [ ] Limit the two real Pi tests to trusted reload deduplication and untrusted project isolation.
 
 - [ ] Focus `pi-tree` tests on selection, bounds, trust, and reload behavior
@@ -30,27 +29,27 @@ Update the available Pi extension test suites so each retained test protects cri
   - [ ] Remove assertions about the external `tree` program's exact glyph layout while retaining ignore, generated-file, symlink, stable-root, and output-size checks.
   - [ ] Limit the two real Pi tests to hidden-message deduplication, project trust, and `TREE.txt` creation.
 
-- [ ] Consolidate `pi-tasks` state, task-list, and widget tests
-  - [ ] Combine replay and reducer cases into one state test that covers transitions, one active work unit, branch-order replay, and corrupt-entry rejection.
+- [ ] Reduce `pi-tasks` state, task-list, and widget tests
+  - [ ] Keep the reducer and replay cases for state transitions, one active work unit, branch-order replay, and corrupt-entry rejection, and remove repeated schema assertions.
   - [ ] Keep task-list filename, hierarchy, UTF-8, checkbox-only update, revision-conflict, and completed-list deletion cases in `state/task-list-file.test.ts`.
-  - [ ] Move the control-character and Unicode display cases into `todo.invalidation.test.ts`, then delete `test/tool/sanitize.test.ts`.
+  - [ ] Reduce `test/tool/sanitize.test.ts` to one control-character case and one ordinary Unicode case.
   - [ ] Replace exact widget spacing assertions with semantic content, line-count, and width assertions.
 
 - [ ] Simplify `pi-tasks` command integration and test infrastructure
   - [ ] Delete `pi-tasks/test/e2e.test.ts` and remove `test:e2e` from `pi-tasks/package.json`.
   - [ ] Reduce `todo.command.test.ts` to tool schema, busy-state guards, load-run-complete-continue, hidden continuation state, compression threshold, stale continuation, stop during compression, compression failure, and finalization.
   - [ ] Add command cases that do not queue a continuation after a source revision conflict and do not report completion after `git add` or `git commit` failure.
-  - [ ] Load the extension through the public Pi extension loader and reduce `test/helpers.ts` to deterministic context and filesystem fixtures.
-  - [ ] Delete `test/setup.ts` and its script import, and remove the unused `minimatch` and `yaml` development dependencies.
+  - [ ] Remove helper APIs and fixture fields that no retained test uses while preserving the existing isolated test environment.
+  - [ ] Remove the unused `minimatch` and `yaml` development dependencies.
 
 - [ ] Consolidate `pi-sync` planning, command, state, settings, conflict, and UI tests
   - [ ] Move the `/config-sync` registration assertion from `test/smoke.test.ts` into `test/commands.test.ts`, delete `test/smoke.test.ts`, and remove `test:integration`.
   - [ ] Keep command parsing, bounded diff output, cancellation settling, explicit conflict decisions, immutable plan authorization, headless plan-only behavior, state and schema refusal, managed-scope denial, strict settings parsing, and machine-only preservation.
-  - [ ] Convert repeated footer, conflict-choice, stale-plan, classifier, scanner-failure, and approval cases into table-driven tests without removing distinct security inputs.
+  - [ ] Remove repeated assertions that restate the same footer, conflict, stale-plan, or approval result.
   - [ ] Remove the direct `StatusGenerationGuard` test and keep the complete three-way classifier table and deterministic plan identity checks.
 
 - [ ] Simplify `pi-sync` filesystem, Git, migration, and security integration tests
-  - [ ] Keep traversal, collision, symlink, nested-repository, exact-byte, canonical-comparison, and size-limit cases with shared temporary-directory fixtures.
+  - [ ] Keep traversal, collision, symlink, nested-repository, exact-byte, canonical-comparison, and size-limit cases with the existing temporary-directory fixtures.
   - [ ] Keep real Git cases for exact candidate ancestry, hook suppression, dirty-worktree refusal, manifest inspection, stale publication, candidate preservation, and non-force pushes.
   - [ ] Remove assertions about every Git call's timeout, no-fetch implementation details, unrelated machine files, and repeated remote-ref comparisons.
   - [ ] Keep validated legacy migration, ambiguous-baseline no-delete behavior, fail-closed scanner phases, final-tree validation, and redacted secret findings.

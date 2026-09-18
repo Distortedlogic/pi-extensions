@@ -1,44 +1,29 @@
 # Goal
 
-Update pi-tasks so an active `/tasks run` assigns and completes one subtask at a time, writes each subtask completion to the source Markdown file, completes a work unit only after all of its subtasks are complete, and exposes the `task` completion tool only while a pi-tasks subtask is active, with precise instructions that prevent use in unrelated conversations.
+Update pi-tasks so `/tasks run` advances one Markdown subtask at a time: the agent receives one current subtask, the `task` tool marks only that subtask complete, the parent work unit completes only after all child subtasks complete, and the tool and its instructions are unavailable outside an active task run.
 
 ## Work units
 
 - [ ] Implement subtask progression in `pi-tasks/src/todo-state.ts`
-  - [ ] Define the current subtask as the first pending subtask in the current in-progress work unit without adding a new subtask status.
-  - [ ] Update the next operation to return the current work unit and its current subtask, including partially completed work units loaded from Markdown.
-  - [ ] Update the complete operation to complete only the current subtask, keep the work unit in progress while pending subtasks remain, and complete the work unit after its last subtask.
-  - [ ] Update operation result types so callers can distinguish current-subtask, completed-subtask, completed-work-unit, all-complete, and invalid-current-state outcomes.
-- [ ] Update task feeding and agent instructions for one current subtask
-  - [ ] Replace the work-unit feed path in `pi-tasks/src/index.ts` with a subtask feed path that includes the goal, current work unit, current subtask, and sibling subtask status.
-  - [ ] Tell the agent to work only on the supplied current subtask and to call `task` once with `{"action":"complete"}` only after that subtask and its required checks are complete.
-  - [ ] Update the `execute-task` prompt in `pi-tasks/AGENTS.yml` to prohibit use of the completion tool for ordinary user requests or work outside an active `/tasks run`.
-  - [ ] Update the `task` label, description, action description, prompt snippet, and prompt guideline with the same run-specific wording while preserving the existing tool name and action.
-- [ ] Persist and continue each subtask completion in `pi-tasks/src/index.ts`
-  - [ ] Validate that a live run and current subtask exist before the tool changes state or writes the task-list file.
-  - [ ] Write the one-subtask state change with `dumpTaskList()` before publishing the new in-memory state or continuation details.
-  - [ ] Keep the parent work-unit checkbox unchecked until the last subtask and check the parent in the same write that completes the last subtask.
-  - [ ] Continue with the next pending subtask in the same work unit, or select the next work unit after the current work unit completes.
-  - [ ] Keep the existing final task-list removal and Git commit behavior restricted to the state where all work units and subtasks are complete.
-  - [ ] Add sequential tool execution and a per-run completion guard so duplicate tool calls cannot complete more than one supplied subtask.
-- [ ] Limit the completion tool to an active pi-tasks subtask
-  - [ ] Add a small active-tool helper that adds or removes `task` with `pi.getActiveTools()` and `pi.setActiveTools()` without changing tools owned by other extensions.
-  - [ ] Keep `task` inactive after ordinary session startup, after `/tasks stop`, after final completion, and whenever restored state has no valid active run and current subtask.
-  - [ ] Activate `task` immediately before feeding a current subtask and deactivate it while that completion is settling.
-  - [ ] Restore the correct tool state during `session_start` and `session_tree`, including a stopped run that can later resume at its first pending subtask.
-  - [ ] Ensure a rejected, duplicate, or failed completion does not advance task state or leave the tool in an incorrect active state.
-- [ ] Align the task widget with subtask execution
-  - [ ] Update `pi-tasks/src/task-widget.ts` to show the first pending subtask in the current work unit with the active indicator.
-  - [ ] Keep completed subtasks and later pending subtasks visually distinct without changing the widget width or line limits.
-  - [ ] Preserve the existing work-unit progress and all-complete display.
-- [ ] Update the existing pi-tasks tests for subtask-level behavior
-  - [ ] Cover first-pending-subtask selection, one-subtask completion, partial work-unit state, final-subtask parent completion, next-work-unit selection, and pre-completed subtask skipping.
-  - [ ] Verify that each valid completion updates the Markdown subtask checkbox and source revision, while a source conflict or write failure does not advance state.
-  - [ ] Verify that duplicate completion calls cannot advance twice and that stop and resume continue at the correct pending subtask.
-  - [ ] Verify that `task` is inactive outside a run, active only for a supplied subtask, and inactive again while settling, after stop, and after final completion.
-  - [ ] Verify that session replay, tree navigation, continuation handling, and the existing pi-compress integration continue to work without a protocol change.
-- [ ] Validate and deliver the pi-tasks update
-  - [ ] Run the existing typecheck, Biome, unit, and end-to-end checks for pi-tasks.
-  - [ ] Verify a clean full install, a clean production install, and a production extension load without provider credentials.
-  - [ ] Confirm that no pi-compress protocol, dependency, package manifest, README, or new test-suite change was added without a demonstrated need.
-  - [ ] Commit and push the pi-tasks changes, then run `pi update` for the installed extension.
+  - [ ] Define the current subtask as the first pending subtask in the current in-progress work unit.
+  - [ ] Update the next operation to resume that subtask or start the first pending subtask of the next pending work unit.
+  - [ ] Update the complete operation to mark only the current subtask complete, keep its work unit in progress while another subtask is pending, and complete the work unit after its last subtask.
+  - [ ] Return the current or completed subtask with each operation outcome so runtime code does not have to infer the transition.
+- [ ] Apply subtask completion and Markdown synchronization in `pi-tasks/src/index.ts`
+  - [ ] Replace work-unit feeding with a subtask feed that identifies the goal, current work unit, current subtask, and sibling subtask status.
+  - [ ] Require a live task run and current subtask before `task` applies the complete action.
+  - [ ] Call `dumpTaskList()` with the one-subtask state change before updating runtime state or continuation details, and leave state unchanged when the write fails.
+  - [ ] Feed the next pending subtask after continuation handling, or use the existing finalization path after all work units complete.
+  - [ ] Preserve completed subtask checkboxes when `/tasks stop` pauses a run and resume at the first pending subtask on the next `/tasks run`.
+- [ ] Scope the `task` tool and its instructions to active task runs
+  - [ ] Use `pi.getActiveTools()` and `pi.setActiveTools()` to keep `task` inactive without changing tools owned by other extensions.
+  - [ ] Activate `task` before feeding a subtask, and deactivate it after `/tasks stop`, final completion, or restoration of a session branch with no active run.
+  - [ ] Restore the correct active-tool state during `session_start` and `session_tree`.
+  - [ ] Update the tool label, description, action description, prompt snippet, and prompt guideline to permit the complete action only for the current subtask supplied by `/tasks run`.
+  - [ ] Update `pi-tasks/AGENTS.yml` with the same restriction and instruct the agent to call `task` once only after the supplied subtask and its required checks are complete.
+- [ ] Update the existing pi-tasks tests and run required checks
+  - [ ] Test current-subtask selection, one-subtask completion, partial work-unit state, last-subtask work-unit completion, next-work-unit selection, and pre-completed subtask skipping.
+  - [ ] Test Markdown output and source revisions after each subtask, including no state advance after a source revision conflict.
+  - [ ] Test tool activation during run, stop, completion, session start, and session tree restoration.
+  - [ ] Test that continuation and existing range compression still preserve the subtask-level task state.
+  - [ ] Run typecheck, Biome, the existing tests, clean full and production installs, and the production extension-load check without provider credentials.

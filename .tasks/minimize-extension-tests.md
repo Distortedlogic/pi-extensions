@@ -1,6 +1,6 @@
 # Goal
 
-Reduce the supplied Pi extension tests to a minimal deterministic suite that protects critical extension-owned behavior through public APIs, removes duplicate and external-product checks, adds only demonstrated coverage gaps, removes unused test support, and passes all required repository checks.
+Reduce the Pi extension test suites to the necessary deterministic cases that protect critical extension-owned behavior through public APIs, remove duplicate and external-product checks, remove unused test support, and pass all required repository checks.
 
 ## Work units
 

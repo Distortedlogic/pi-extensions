@@ -18,6 +18,9 @@ Use Pi documentation for normal extension APIs and TypeScript knowledge. This sk
 - Declare every directly imported runtime package. Do not rely on a peer package's transitive dependencies.
 - Do not add `@earendil-works/pi-tui` unless source code imports TUI components directly. `ctx.ui` does not require a direct TUI dependency.
 - Do not add Vite or a build step for a normal Pi extension.
+- Use `src/index.ts` as the extension entry.
+- Use Node `>=22.19.0`, TypeScript `~7.0.2`, Node 22 type definitions, Biome `^2.5.14`, and Pi peer dependencies `>=0.85.1 <1` from the Copier baseline.
+- Keep the generated `.gitignore`. Commit `package-lock.json` after `npm install`.
 
 The Copier template at the meta-package root is the only source for every new extension repository. Resolve the package root from this skill file (`../..`) and use that directory as the Copier source. Do not copy a baseline manually or use another repository.
 
@@ -59,9 +62,18 @@ Install and run local package tools through npm scripts. Do not guess a CLI path
 
 ## Preload manifest
 
-Use the top-level `pi-preload` section in the generated `AGENTS.yml` as the baseline. It preloads runtime TypeScript, package metadata, and the common Pi extension references. It intentionally does not preload `README.md`, test TypeScript files, or lock files.
+Use this generated top-level `pi-preload` baseline:
 
-Add only source and Pi files needed by that extension. Do not preload lock files.
+```yaml
+pi-preload:
+  presets:
+    - "pi-extension"
+  includes:
+    - "src/**/*.ts"
+    - "package.json"
+```
+
+It preloads runtime TypeScript, package metadata, and the common Pi extension references. It intentionally does not preload `README.md`, test TypeScript files, or lock files. Add only source and Pi files needed by that extension. Do not preload lock files.
 
 ## Non-obvious Pi behavior
 

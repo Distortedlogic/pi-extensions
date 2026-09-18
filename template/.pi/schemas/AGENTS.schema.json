@@ -1,110 +1,101 @@
 {
 	"$schema": "https://json-schema.org/draft/2020-12/schema",
-	"$id": "https://distortedlogic.net/schemas/AGENTS.schema.json",
-	"title": "Pi AGENTS.yml configuration",
 	"type": "object",
-	"additionalProperties": true,
 	"properties": {
-		"pi": {
+		"pi-preload": {
 			"type": "object",
-			"additionalProperties": false,
-			"required": ["extensions"],
-			"properties": {
-				"extensions": {
-					"$ref": "#/$defs/extensions"
-				}
-			}
-		}
-	},
-	"$defs": {
-		"extensions": {
-			"type": "object",
-			"additionalProperties": false,
-			"properties": {
-				"pi-context-preload": {
-					"$ref": "#/$defs/contextPreload"
-				},
-				"pi-modes": {
-					"$ref": "#/$defs/modes"
-				},
-				"pi-prompts": {
-					"$ref": "#/$defs/prompts"
-				}
-			}
-		},
-		"contextPreload": {
-			"type": "object",
-			"additionalProperties": false,
 			"properties": {
 				"extends": {
-					"$ref": "#/$defs/stringList"
+					"type": "array",
+					"items": {
+						"type": "string",
+						"minLength": 1
+					}
 				},
-				"files": {
-					"$ref": "#/$defs/stringList"
+				"presets": {
+					"type": "array",
+					"items": {
+						"type": "string",
+						"minLength": 1
+					}
+				},
+				"includes": {
+					"type": "array",
+					"items": {
+						"type": "string",
+						"minLength": 1
+					}
+				},
+				"excludes": {
+					"type": "array",
+					"items": {
+						"type": "string",
+						"minLength": 1
+					}
 				},
 				"contexts": {
-					"$ref": "#/$defs/stringList"
+					"type": "array",
+					"items": {
+						"type": "string",
+						"minLength": 1
+					}
 				}
-			}
-		},
-		"modes": {
-			"type": "object",
-			"propertyNames": {
-				"pattern": ".*\\S.*"
 			},
-			"additionalProperties": {
-				"type": "string"
-			}
+			"additionalProperties": false
 		},
-		"prompts": {
+		"pi-modes": {
 			"type": "object",
-			"additionalProperties": false,
-			"required": ["prompts"],
+			"patternProperties": {
+				"\\S": {
+					"type": "string"
+				}
+			},
+			"additionalProperties": false
+		},
+		"pi-prompts": {
+			"type": "object",
+			"required": [
+				"prompts"
+			],
 			"properties": {
 				"prompts": {
 					"type": "object",
-					"propertyNames": {
-						"minLength": 1
+					"patternProperties": {
+						"^.*$": {
+							"type": "object",
+							"required": [
+								"body"
+							],
+							"properties": {
+								"description": {
+									"type": "string"
+								},
+								"body": {
+									"type": "string"
+								}
+							},
+							"additionalProperties": false
+						}
 					},
-					"additionalProperties": {
-						"$ref": "#/$defs/prompt"
-					}
+					"additionalProperties": false
 				},
 				"chains": {
 					"type": "object",
-					"propertyNames": {
-						"minLength": 1
-					},
-					"additionalProperties": {
-						"type": "array",
-						"minItems": 1,
-						"items": {
-							"type": "string",
-							"minLength": 1
+					"patternProperties": {
+						"^.*$": {
+							"type": "array",
+							"items": {
+								"type": "string",
+								"minLength": 1
+							},
+							"minItems": 1
 						}
-					}
+					},
+					"additionalProperties": false
 				}
-			}
-		},
-		"prompt": {
-			"type": "object",
-			"additionalProperties": false,
-			"required": ["body"],
-			"properties": {
-				"description": {
-					"type": "string"
-				},
-				"body": {
-					"type": "string"
-				}
-			}
-		},
-		"stringList": {
-			"type": "array",
-			"items": {
-				"type": "string",
-				"minLength": 1
-			}
+			},
+			"additionalProperties": false
 		}
-	}
+	},
+	"additionalProperties": true
 }

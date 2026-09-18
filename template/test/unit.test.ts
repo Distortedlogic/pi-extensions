@@ -13,8 +13,8 @@ test("uses direct top-level AGENTS.yml extension configuration", async () => {
 	const document = parse(source) as Record<string, unknown>;
 
 	assert.deepEqual(document["pi-preload"], {
-		extends: ["pi-extension"],
-		files: ["src/**/*.ts", "package.json"],
+		presets: ["pi-extension"],
+		includes: ["src/**/*.ts", "package.json"],
 	});
 	assert.equal(Object.hasOwn(document, "pi"), false);
 });

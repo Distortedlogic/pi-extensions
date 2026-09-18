@@ -2,11 +2,17 @@
   "name": "pi-extensions",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "description": "Private meta package for Pi extension authoring resources.",
   "keywords": [
     "pi-package"
   ],
+  "engines": {
+    "node": ">=22.19.0"
+  },
   "files": [
+    "agents.ts",
+    "scripts",
     "skills",
     "template",
     "copier.yml",
@@ -16,5 +22,13 @@
     "skills": [
       "./skills"
     ]
+  },
+  "scripts": {
+    "check": "npm run schema:check",
+    "schema:check": "node --experimental-strip-types scripts/generate-agents-schema.ts --check",
+    "schema:generate": "node --experimental-strip-types scripts/generate-agents-schema.ts"
+  },
+  "devDependencies": {
+    "typebox": "1.3.32"
   }
 }

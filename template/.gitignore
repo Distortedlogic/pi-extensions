@@ -5,11 +5,8 @@ coverage/
 *.log
 *.tgz
 .DS_Store
-.pi/tmp
 .env
+.pi/tmp
 .pi/readcache
 TREE.txt
 PRELOAD.md
-
-/pi-*/
-

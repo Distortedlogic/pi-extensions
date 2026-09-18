@@ -4,38 +4,38 @@ Align all owned custom Pi extensions with the shared package, runtime, configura
 
 ## Work units
 
-- [ ] Align pi-preload configuration and package structure
-  - [ ] Move the extension entry to `src/index.ts` and use one strict `agents.ts` schema for the top-level `pi-preload` section and preset files.
-  - [ ] Load trusted project configuration once during `session_start` and preserve existing preset, context, include, exclude, limit, image, and snapshot behavior.
-  - [ ] Update the existing pi-preload tests for the schema, trust boundary, presets, project references, context sources, and production entry path.
+- [x] Align pi-preload configuration and package structure
+  - [x] Move the extension entry to `src/index.ts` and use one strict `agents.ts` schema for the top-level `pi-preload` section and preset files.
+  - [x] Load trusted project configuration once during `session_start` and preserve existing preset, context, include, exclude, limit, image, and snapshot behavior.
+  - [x] Update the existing pi-preload tests for the schema, trust boundary, presets, project references, context sources, and production entry path.
 
-- [ ] Align pi-modes configuration and package structure
-  - [ ] Move the extension entry to `src/index.ts` and use the strict `agents.ts` schema for every top-level `pi-modes` source.
-  - [ ] Preserve configured user-package, trusted project-package, and trusted project-root precedence together with current mode cycling, suffix transformation, widget, and event-bus behavior.
-  - [ ] Update the existing pi-modes tests for source precedence, trust, schema validation, entry path, and runtime behavior.
+- [x] Align pi-modes configuration and package structure
+  - [x] Move the extension entry to `src/index.ts` and use the strict `agents.ts` schema for every top-level `pi-modes` source.
+  - [x] Preserve configured user-package, trusted project-package, and trusted project-root precedence together with current mode cycling, suffix transformation, widget, and event-bus behavior.
+  - [x] Update the existing pi-modes tests for source precedence, trust, schema validation, entry path, and runtime behavior.
 
-- [ ] Align pi-prompts configuration and resource discovery
-  - [ ] Use one strict `agents.ts` schema for required prompts and optional chains, and cache validated top-level `pi-prompts` sources during `session_start`.
-  - [ ] Make resource discovery consume the validated cache while preserving prompt-directory loading, duplicate-name rejection, chain-reference validation, editor cycling, and follow-up delivery.
-  - [ ] Update the existing pi-prompts tests for package and project precedence, trust, schema validation, prompt directories, chains, and production loading.
+- [x] Align pi-prompts configuration and resource discovery
+  - [x] Use one strict `agents.ts` schema for required prompts and optional chains, and cache validated top-level `pi-prompts` sources during `session_start`.
+  - [x] Make resource discovery consume the validated cache while preserving prompt-directory loading, duplicate-name rejection, chain-reference validation, editor cycling, and follow-up delivery.
+  - [x] Update the existing pi-prompts tests for package and project precedence, trust, schema validation, prompt directories, chains, and production loading.
 
-- [ ] Finalize the shared authoring and Copier baseline
-  - [ ] Generate one deterministic `AGENTS.yml` schema from the shared source and make the schema check part of the meta-package validation.
-  - [ ] Update the Copier template to use `src/index.ts`, the current top-level `pi-preload.presets` and `pi-preload.includes` fields, Node `>=22.19.0`, TypeScript 7.0.x, Node 22 type definitions, Biome 2.5.14, Pi `>=0.85.1 <1`, and a generated-project `.gitignore`.
-  - [ ] Update the extension-authoring and pi-preload-authoring skills to produce the same package and configuration structure.
-  - [ ] Render a new extension from the template and pass its existing typecheck, lint, unit, review, and end-to-end commands.
+- [x] Finalize the shared authoring and Copier baseline
+  - [x] Generate one deterministic `AGENTS.yml` schema from the shared source and make the schema check part of the meta-package validation.
+  - [x] Update the Copier template to use `src/index.ts`, the current top-level `pi-preload.presets` and `pi-preload.includes` fields, Node `>=22.19.0`, TypeScript 7.0.x, Node 22 type definitions, Biome 2.5.14, Pi `>=0.85.1 <1`, and a generated-project `.gitignore`.
+  - [x] Update the extension-authoring and pi-preload-authoring skills to produce the same package and configuration structure.
+  - [x] Render a new extension from the template and pass its existing typecheck, lint, unit, review, and end-to-end commands.
 
-- [ ] Apply the finalized baseline to the configuration extensions
-  - [ ] Apply the final package, TypeScript, test-script, lockfile, and ignore-file baseline to pi-preload without changing its validated preload behavior.
-  - [ ] Apply the same baseline to pi-modes without changing its validated mode behavior or adding a new test suite.
-  - [ ] Apply the same baseline to pi-prompts without changing its validated prompt and chain behavior.
-  - [ ] Run each extension's existing `check` command and credential-free production entry load.
+- [x] Apply the finalized baseline to the configuration extensions
+  - [x] Apply the final package, TypeScript, test-script, lockfile, and ignore-file baseline to pi-preload without changing its validated preload behavior.
+  - [x] Apply the same baseline to pi-modes without changing its validated mode behavior or adding a new test suite.
+  - [x] Apply the same baseline to pi-prompts without changing its validated prompt and chain behavior.
+  - [x] Run each extension's existing `check` command and credential-free production entry load.
 
-- [ ] Align pi-sync with the shared extension conventions
-  - [ ] Move the real extension registration to `src/index.ts`, point the Pi manifest at it, and remove the root forwarding entry.
-  - [ ] Replace the existing Vitest runner with `node:test` while preserving unit, security, recovery, transaction, package, and two-machine end-to-end coverage.
-  - [ ] Make `test` run unit tests before the two-machine end-to-end test and make `check` run typecheck, lint, and all existing tests.
-  - [ ] Apply the shared Node, TypeScript, Pi peer, lockfile, and production-entry conventions without adding setup, scope-expansion, or transaction-resume features.
+- [x] Align pi-sync with the shared extension conventions
+  - [x] Move the real extension registration to `src/index.ts`, point the Pi manifest at it, and remove the root forwarding entry.
+  - [x] Replace the existing Vitest runner with `node:test` while preserving unit, security, recovery, transaction, package, and two-machine end-to-end coverage.
+  - [x] Make `test` run unit tests before the two-machine end-to-end test and make `check` run typecheck, lint, and all existing tests.
+  - [x] Apply the shared Node, TypeScript, Pi peer, lockfile, and production-entry conventions without adding setup, scope-expansion, or transaction-resume features.
 
 - [ ] Align pi-env with the shared conventions and active secret model
   - [ ] Move the extension entry to `src/index.ts` and apply the shared package, compiler, lockfile, and test-script structure.

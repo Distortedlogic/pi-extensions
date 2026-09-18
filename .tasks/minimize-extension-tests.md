@@ -1,6 +1,6 @@
 # Goal
 
-Make only evidence-based changes to the available Pi extension tests: preserve the existing template and real Pi extension-load tests, add missing user-facing cycle and finalization-failure coverage to existing suites, remove confirmed unused test dependencies, and pass all required checks without reorganizing suites that already protect distinct extension-owned behavior.
+Make every available Pi extension test suite minimal and focused on critical behavior owned by that extension by removing or combining duplicated, excessive, implementation-specific tests and tests that primarily cover Pi, Node.js, external tools, or third-party packages; prefer public functions, public Pi APIs, deterministic fixtures, and small integration tests; keep real Pi end-to-end tests only where a process boundary is necessary; remove test helpers, fixtures, scripts, and dependencies that become unused; add only missing critical extension-specific coverage; and pass all required validation for every changed extension.
 
 ## Work units
 

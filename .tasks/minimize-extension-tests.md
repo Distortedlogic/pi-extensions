@@ -15,13 +15,8 @@ Make every available Pi extension test suite minimal and focused on critical beh
 - [ ] Add `pi-tasks` finalization-failure coverage
   - [ ] Extend the existing finalization test with a `git add` failure case and a `git commit` failure case.
   - [ ] Verify that each failure is reported, no empty task state is committed, and no additional work unit is fed.
-  - [ ] Remove `minimatch` and `yaml` from `pi-tasks` development dependencies and update its lockfile.
-
-- [ ] Remove unrelated machine-state setup from the `pi-sync` stale-publication test
-  - [ ] Delete the `machineMarker` fixture setup and unchanged-file assertion from the stale-publication case in `pi-sync/test/git.test.ts`.
-  - [ ] Assert the case through its `plan_expired` result, current shared commit, and preserved candidate reference.
 
 - [ ] Validate and publish the changed extensions
-  - [ ] Run type checking, linting, and the complete retained test suite in `pi-modes`, `pi-prompts`, `pi-sync`, and `pi-tasks`.
+  - [ ] Run type checking, linting, and the complete retained test suite in `pi-modes`, `pi-prompts`, and `pi-tasks`.
   - [ ] Run clean full-install, production-install, and production extension-load checks without provider credentials.
   - [ ] Commit and push each changed repository, then run `pi update` for those extensions.

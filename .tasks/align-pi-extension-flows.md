@@ -1,6 +1,6 @@
 # Goal
 
-Correct the remaining concrete runtime defects in pi-env, pi-tree, and pi-steering without duplicating the existing extension-convention or completed AGENTS.yml migration work.
+Make pi-env load only approved dotenv sources with correct precedence, make pi-tree produce a stable project-root tree, and make pi-steering use the required exact steering message.
 
 ## Work units
 
@@ -10,11 +10,10 @@ Correct the remaining concrete runtime defects in pi-env, pi-tree, and pi-steeri
   - [ ] Update the existing pi-env unit and end-to-end tests for global values, project overrides, untrusted projects, existing process values, cleanup, and omitted secret values in key context.
 
 - [ ] Remove the temporary input path from pi-tree output
-  - [ ] Normalize the first line returned by `tree --fromfile` to `.` before enforcing the output limit, writing `TREE.txt`, or injecting context.
-  - [ ] Preserve directory ordering, depth reduction, output bounds, abort handling, and temporary-directory cleanup.
+  - [ ] Remove the `tree --fromfile` input-file heading and prefix the rendered tree with `.` before writing `TREE.txt` or injecting context.
   - [ ] Update the existing pi-tree tests to require a stable `.` root and reject temporary path content.
 
 - [ ] Make pi-steering emit the required message exactly
   - [ ] Replace `STEERING_MESSAGE` with `are u overcomplicating? overengineering? lost the scope? not idiomatic n native? not following the codebase conventions? deviate from the task list instructions?` and remove the appended sentence.
-  - [ ] Emit the exact message visibly at each ten-tool-call boundary while preserving the counter reset on each user message.
-  - [ ] Pass the existing typecheck, Biome check, empty test command, and credential-free extension-load check without adding a test file.
+  - [ ] Keep the current hidden steer delivery, ten-tool-call interval, and counter reset on each user message.
+  - [ ] Run the existing `check` command.

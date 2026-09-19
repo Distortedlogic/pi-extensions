@@ -2,7 +2,16 @@ _min_copier_version: "9.17.2"
 _subdirectory: template
 _answers_file: .copier-answers.yml
 _tasks:
-  - "if git rev-parse --git-dir >/dev/null 2>&1; then pre-commit install --hook-type pre-commit --hook-type pre-push; fi"
+  - "npm install"
+  - |
+      if git rev-parse --git-dir >/dev/null 2>&1; then
+        if ! command -v pre-commit >/dev/null 2>&1; then
+          echo "Error: pre-commit is required. Install it from https://pre-commit.com/." >&2
+          exit 1
+        fi
+        pre-commit install --hook-type pre-commit --hook-type pre-push
+        pre-commit install-hooks
+      fi
 _skip_if_exists:
   - src/index.ts
   - README.md

@@ -7,7 +7,7 @@ Update pi-tasks so `/tasks run` advances one Markdown subtask at a time: the age
 - [ ] Implement subtask progression in `pi-tasks/src/todo-state.ts`
   - [ ] Define the current subtask as the first pending subtask in the current in-progress work unit.
   - [ ] Update the next operation to resume that subtask or start the first pending subtask of the next pending work unit.
-  - [ ] Update the complete operation to mark only the current subtask complete, keep its work unit in progress while another subtask is pending, and complete the work unit after its last subtask.
+  - [ ] Update the complete operation to mark the current subtask complete and, when it was the last pending subtask, also mark its parent work unit complete; otherwise keep the parent work unit in progress.
   - [ ] Return the current or completed subtask with each operation outcome so runtime code does not have to infer the transition.
 - [ ] Apply subtask completion and Markdown synchronization in `pi-tasks/src/index.ts`
   - [ ] Replace work-unit feeding with a subtask feed that identifies the goal, current work unit, current subtask, and sibling subtask status.
@@ -17,7 +17,8 @@ Update pi-tasks so `/tasks run` advances one Markdown subtask at a time: the age
   - [ ] Preserve completed subtask checkboxes when `/tasks stop` pauses a run and resume at the first pending subtask on the next `/tasks run`.
 - [ ] Scope the `task` tool and its instructions to active task runs
   - [ ] Use `pi.getActiveTools()` and `pi.setActiveTools()` to keep `task` inactive without changing tools owned by other extensions.
-  - [ ] Activate `task` before feeding a subtask, and deactivate it after `/tasks stop`, final completion, or restoration of a session branch with no active run.
+  - [ ] Enforce one activation invariant: `task` is active only while `activeRun`, `state.feedEnabled`, and a current pending subtask are all present.
+  - [ ] Activate `task` before feeding a subtask, and deactivate it whenever the invariant becomes false, including after `/tasks stop`, final subtask completion, compression cancellation or failure, finalization failure, or restoration of a session branch without a live current subtask.
   - [ ] Restore the correct active-tool state during `session_start` and `session_tree`.
   - [ ] Update the tool label, description, action description, prompt snippet, and prompt guideline to permit the complete action only for the current subtask supplied by `/tasks run`.
   - [ ] Update `pi-tasks/AGENTS.yml` with the same restriction and instruct the agent to call `task` once only after the supplied subtask and its required checks are complete.

@@ -4,25 +4,25 @@ Reduce the existing Pi extension tests so each suite covers only critical extens
 
 ## Work units
 
-- [ ] Consolidate the `pi-compress` protocol and compression-core tests before changing `pi-tasks`.
-  - [ ] Keep `pi-compress/test/protocol.test.ts` focused on public protocol names, exact request and result schemas, stored-version handling, additive stored fields, and legacy batch markers.
-  - [ ] Reduce `pi-compress/test/compression.test.ts` to atomic tool-call groups, protected boundaries, source and continuation integrity, stale rewrite rejection, append-only application, direct range compression, service coordination, batch compression, and crop reconstruction.
-  - [ ] Remove native selector traversal, arbitrary timing, repeated token-format, and duplicate error-path tests.
-  - [ ] Add focused cases for oversized range rejection, current-model selection, and a service model failure that returns a stable code without writing entries.
+- [x] Consolidate the `pi-compress` protocol and compression-core tests before changing `pi-tasks`.
+  - [x] Keep `pi-compress/test/protocol.test.ts` focused on public protocol names, exact request and result schemas, stored-version handling, additive stored fields, and legacy batch markers.
+  - [x] Reduce `pi-compress/test/compression.test.ts` to atomic tool-call groups, protected boundaries, source and continuation integrity, stale rewrite rejection, append-only application, direct range compression, service coordination, batch compression, and crop reconstruction.
+  - [x] Remove native selector traversal, arbitrary timing, repeated token-format, and duplicate error-path tests.
+  - [x] Add focused cases for oversized range rejection, current-model selection, and a service model failure that returns a stable code without writing entries.
 
-- [ ] Reduce `pi-compress` command and integration tests to one case per public behavior.
-  - [ ] Remove duplicate range, rewrite, protocol, crop reconstruction, and legacy marker coverage from `pi-compress/test/extension.test.ts`.
-  - [ ] Keep command registration, branch and model selection, squash, discard, tournament merge, mandatory decision review, crop commands, append-only undo, ambient warnings, and one semantic panel render.
-  - [ ] Replace the global installed-Pi process test with one repository-resolved `RpcClient` extension-load test.
-  - [ ] Remove unused selector, protocol-request, child-process, and temporary-directory helpers and imports.
+- [x] Reduce `pi-compress` command and integration tests to one case per public behavior.
+  - [x] Remove duplicate range, rewrite, protocol, crop reconstruction, and legacy marker coverage from `pi-compress/test/extension.test.ts`.
+  - [x] Keep command registration, branch and model selection, squash, discard, tournament merge, mandatory decision review, crop commands, append-only undo, ambient warnings, and one semantic panel render.
+  - [x] Replace the global installed-Pi process test with one repository-resolved `RpcClient` extension-load test.
+  - [x] Remove unused selector, protocol-request, child-process, and temporary-directory helpers and imports.
 
-- [ ] Simplify `pi-tasks` command orchestration tests against the consolidated `pi-compress` API.
-  - [ ] Combine task-list load, run, and completion into one workflow in `pi-tasks/test/todo.command.test.ts`.
-  - [ ] Replace separate compression-threshold tests with one boundary table and retain one stop-during-compression race.
-  - [ ] Combine compression cancellation and failure cases and verify that feeding stops without sending the next work unit.
-  - [ ] Remove private continuation-state blacklists, repeated private snapshot equality checks, and redundant append-call counts.
-  - [ ] Add a prior `pi-compress/compression` marker case and verify that the next batch compression uses it as the anchor.
-  - [ ] Keep one successful task-list finalization and one Git failure that preserves recoverable task state.
+- [x] Simplify `pi-tasks` command orchestration tests against the consolidated `pi-compress` API.
+  - [x] Combine task-list load, run, and completion into one workflow in `pi-tasks/test/todo.command.test.ts`.
+  - [x] Replace separate compression-threshold tests with one boundary table and retain one stop-during-compression race.
+  - [x] Combine compression cancellation and failure cases and verify that feeding stops without sending the next work unit.
+  - [x] Remove private continuation-state blacklists, repeated private snapshot equality checks, and redundant append-call counts.
+  - [x] Add a prior `pi-compress/compression` marker case and verify that the next batch compression uses it as the anchor.
+  - [x] Keep one successful task-list finalization and one Git failure that preserves recoverable task state.
 
 - [ ] Simplify `pi-tasks` state, file, widget, and sanitization tests.
   - [ ] Keep replay order, corrupt-state rejection, reducer transitions, the single-current-work-unit invariant, hierarchy validation, UTF-8 validation, checkbox-only writes, revision conflicts, and completed-list deletion.

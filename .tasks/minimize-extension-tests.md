@@ -24,70 +24,70 @@ Reduce the existing Pi extension tests so each suite covers only critical extens
   - [x] Add a prior `pi-compress/compression` marker case and verify that the next batch compression uses it as the anchor.
   - [x] Keep one successful task-list finalization and one Git failure that preserves recoverable task state.
 
-- [ ] Simplify `pi-tasks` state, file, widget, and sanitization tests.
-  - [ ] Keep replay order, corrupt-state rejection, reducer transitions, the single-current-work-unit invariant, hierarchy validation, UTF-8 validation, checkbox-only writes, revision conflicts, and completed-list deletion.
-  - [ ] Reduce filename and malformed-hierarchy tables to representative path, line-break, nesting, and completion-consistency failures.
-  - [ ] Assert widget content, line limits, and visible width instead of exact spacing and complete progress-bar strings.
-  - [ ] Keep one terminal-control sanitization table and one single-line widget case.
-  - [ ] Remove unused fixtures and imports from `pi-tasks/test/helpers.ts` and update the explicit unit-test script for any removed test file.
+- [x] Simplify `pi-tasks` state, file, widget, and sanitization tests.
+  - [x] Keep replay order, corrupt-state rejection, reducer transitions, the single-current-work-unit invariant, hierarchy validation, UTF-8 validation, checkbox-only writes, revision conflicts, and completed-list deletion.
+  - [x] Reduce filename and malformed-hierarchy tables to representative path, line-break, nesting, and completion-consistency failures.
+  - [x] Assert widget content, line limits, and visible width instead of exact spacing and complete progress-bar strings.
+  - [x] Keep one terminal-control sanitization table and one single-line widget case.
+  - [x] Remove unused fixtures and imports from `pi-tasks/test/helpers.ts` and update the explicit unit-test script for any removed test file.
 
-- [ ] Tighten `pi-env` tests around trust, precedence, process preservation, and reload.
-  - [ ] Consolidate trusted and untrusted collection coverage in `pi-env/test/unit.test.ts` while retaining global-to-project precedence, ignored settings files, preserved process values, and cleanup.
-  - [ ] Reduce `pi-env/test/e2e.test.ts` to one shared key, one global key, one project key, and one preserved process key while proving that values never enter context.
-  - [ ] Reload the extension once and verify that one key-only context message remains and the old runtime restores loaded values correctly.
+- [x] Tighten `pi-env` tests around trust, precedence, process preservation, and reload.
+  - [x] Consolidate trusted and untrusted collection coverage in `pi-env/test/unit.test.ts` while retaining global-to-project precedence, ignored settings files, preserved process values, and cleanup.
+  - [x] Reduce `pi-env/test/e2e.test.ts` to one shared key, one global key, one project key, and one preserved process key while proving that values never enter context.
+  - [x] Reload the extension once and verify that one key-only context message remains and the old runtime restores loaded values correctly.
 
-- [ ] Simplify `pi-modes` tests while preserving configuration precedence and runtime behavior.
-  - [ ] Keep strict schema validation and one trusted-versus-untrusted source-precedence table in `pi-modes/test/modes.test.ts`.
-  - [ ] Reduce the runtime case to start, select, cycle, transform one input, reload, and shut down.
-  - [ ] Remove exact listener-removal counts, repeated intermediate widget assertions, and unrelated primitive schema checks.
-  - [ ] Keep one repository-resolved Pi extension-load test.
+- [x] Simplify `pi-modes` tests while preserving configuration precedence and runtime behavior.
+  - [x] Keep strict schema validation and one trusted-versus-untrusted source-precedence table in `pi-modes/test/modes.test.ts`.
+  - [x] Reduce the runtime case to start, select, cycle, transform one input, reload, and shut down.
+  - [x] Remove exact listener-removal counts, repeated intermediate widget assertions, and unrelated primitive schema checks.
+  - [x] Keep one repository-resolved Pi extension-load test.
 
-- [ ] Consolidate `pi-prompts` catalog, trust, cycling, and chain tests.
-  - [ ] Use one catalog fixture in `pi-prompts/test/unit.test.ts` with an inline prompt, a Markdown prompt, one chain, one missing-member failure, and one duplicate-name failure.
-  - [ ] Keep one editor-cycling case that preserves surrounding text without redundant full-object assertions.
-  - [ ] Keep user-package, trusted project-package, and trusted project-root precedence plus chain follow-up behavior in `pi-prompts/test/integration.test.ts`.
-  - [ ] Add a case that changes the selected chain segment before submission and verifies that later chain members do not run.
-  - [ ] Rename the package script from `test:e2e` to `test:integration`.
+- [x] Consolidate `pi-prompts` catalog, trust, cycling, and chain tests.
+  - [x] Use one catalog fixture in `pi-prompts/test/unit.test.ts` with an inline prompt, a Markdown prompt, one chain, one missing-member failure, and one duplicate-name failure.
+  - [x] Keep one editor-cycling case that preserves surrounding text without redundant full-object assertions.
+  - [x] Keep user-package, trusted project-package, and trusted project-root precedence plus chain follow-up behavior in `pi-prompts/test/integration.test.ts`.
+  - [x] Add a case that changes the selected chain segment before submission and verifies that later chain members do not run.
+  - [x] Rename the package script from `test:e2e` to `test:integration`.
 
-- [ ] Reduce `pi-preload` fixture matrices while retaining selection, rendering, limits, and trust boundaries.
-  - [ ] Keep preset merging, include and exclude rules, `.gitignore`, generated-file exclusion, media ordering, binary rejection, nested project references, cycle rejection, and preload size limits.
-  - [ ] Replace the context failure matrix with one import or execution failure and one render failure that name the selected source.
-  - [ ] Reduce Dioxus metadata coverage to one selected package and one ambiguous workspace, with one router, full-stack, and platform template case.
-  - [ ] Replace repeated complete `PRELOAD.md` comparisons with block-order, heading, selected-content, and byte-limit assertions.
-  - [ ] Keep the trusted reload-deduplication and untrusted isolation Pi process tests and remove unused fixtures.
+- [x] Reduce `pi-preload` fixture matrices while retaining selection, rendering, limits, and trust boundaries.
+  - [x] Keep preset merging, include and exclude rules, `.gitignore`, generated-file exclusion, media ordering, binary rejection, nested project references, cycle rejection, and preload size limits.
+  - [x] Replace the context failure matrix with one import or execution failure and one render failure that name the selected source.
+  - [x] Reduce Dioxus metadata coverage to one selected package and one ambiguous workspace, with one router, full-stack, and platform template case.
+  - [x] Replace repeated complete `PRELOAD.md` comparisons with block-order, heading, selected-content, and byte-limit assertions.
+  - [x] Keep the trusted reload-deduplication and untrusted isolation Pi process tests and remove unused fixtures.
 
-- [ ] Simplify `pi-tree` tests around selection, bounded output, trust, and reload.
-  - [ ] Keep one representative exclusion for `.gitignore`, bundled `.treeignore`, generated output, lock files, and symlink traversal.
-  - [ ] Replace external `tree` glyph and detailed-format assertions with stable-root and representative path assertions.
-  - [ ] Replace the 600-file fixture with fewer long paths that still verify the 16 KiB output bound.
-  - [ ] Keep the trusted reload-deduplication and untrusted no-output Pi process tests.
+- [x] Simplify `pi-tree` tests around selection, bounded output, trust, and reload.
+  - [x] Keep one representative exclusion for `.gitignore`, bundled `.treeignore`, generated output, lock files, and symlink traversal.
+  - [x] Replace external `tree` glyph and detailed-format assertions with stable-root and representative path assertions.
+  - [x] Replace the 600-file fixture with fewer long paths that still verify the 16 KiB output bound.
+  - [x] Keep the trusted reload-deduplication and untrusted no-output Pi process tests.
 
-- [ ] Consolidate `pi-sync` planning, configuration, inventory, and state tests before execution tests.
-  - [ ] Keep command parsing, footer priority, diff truncation, stale status protection, and cancellation settling in `test/commands.test.ts`.
-  - [ ] Keep exact conflict choices, rebuilt-plan identity, and merge-workspace behavior while removing internal UI-call details from `test/conflicts.test.ts`.
-  - [ ] Combine path traversal, collisions, symlinks, nested repositories, exact bytes, canonical settings comparison, and size limits into focused tables in `test/files.test.ts`.
-  - [ ] Retain the three-way classifier, immutable plan identity, destination validation, mode blockers, strict settings, pinned packages, exact package decisions, and machine-only preservation.
-  - [ ] Reduce `test/state.test.ts` to corrupt JSON, unknown schema, one state round trip, one plan round trip, managed scope, and permanent deny rules.
+- [x] Consolidate `pi-sync` planning, configuration, inventory, and state tests before execution tests.
+  - [x] Keep command parsing, footer priority, diff truncation, stale status protection, and cancellation settling in `test/commands.test.ts`.
+  - [x] Keep exact conflict choices, rebuilt-plan identity, and merge-workspace behavior while removing internal UI-call details from `test/conflicts.test.ts`.
+  - [x] Combine path traversal, collisions, symlinks, nested repositories, exact bytes, canonical settings comparison, and size limits into focused tables in `test/files.test.ts`.
+  - [x] Retain the three-way classifier, immutable plan identity, destination validation, mode blockers, strict settings, pinned packages, exact package decisions, and machine-only preservation.
+  - [x] Reduce `test/state.test.ts` to corrupt JSON, unknown schema, one state round trip, one plan round trip, managed scope, and permanent deny rules.
 
-- [ ] Reduce `pi-sync` Git and migration tests to owned orchestration and one real Git boundary.
-  - [ ] Keep exact snapshot, one-parent candidate, successful publish, stale publish, valid manifest, and non-destructive invalid-clone behavior in `test/git.test.ts`.
-  - [ ] Fold focused diff and fast-forward assertions into the candidate and successful publish cases.
-  - [ ] Replace malicious-hook execution with captured Git argument checks that require the disabled hook path.
-  - [ ] Replace real Git setup in `test/migration.test.ts` with deterministic `MigrationExec` responses while retaining valid import and ambiguous-baseline fallback.
-  - [ ] Remove unused Git configuration, hook permission, child-process, and repository-fixture code.
+- [x] Reduce `pi-sync` Git and migration tests to owned orchestration and one real Git boundary.
+  - [x] Keep exact snapshot, one-parent candidate, successful publish, stale publish, valid manifest, and non-destructive invalid-clone behavior in `test/git.test.ts`.
+  - [x] Fold focused diff and fast-forward assertions into the candidate and successful publish cases.
+  - [x] Replace malicious-hook execution with captured Git argument checks that require the disabled hook path.
+  - [x] Replace real Git setup in `test/migration.test.ts` with deterministic `MigrationExec` responses while retaining valid import and ambiguous-baseline fallback.
+  - [x] Remove unused Git configuration, hook permission, child-process, and repository-fixture code.
 
-- [ ] Consolidate `pi-sync` transaction, package, recovery, and security fault tests.
-  - [ ] Keep transaction order, locking, immutable-plan revalidation, post-publish restore, and durable-journal behavior while sharing stale-plan fixtures.
-  - [ ] Keep exact package commands, approval rejection before execution, best-effort removal, cancellation, reverse rollback, and rollback-failure reporting without exact complete journal arrays.
-  - [ ] Keep verified backup creation, deletion authorization, backup-before-write, automatic restore, manual recovery paths, and cancellation boundaries with shared failure fixtures.
-  - [ ] Keep explicit recovery choices, immutable restore plans, verified restore, and stale-plan rejection.
-  - [ ] Keep denied paths, final-tree validation, conflict markers, strict JSON, package policy, machine-only preservation, scanner failures, and redacted secret findings.
+- [x] Consolidate `pi-sync` transaction, package, recovery, and security fault tests.
+  - [x] Keep transaction order, locking, immutable-plan revalidation, post-publish restore, and durable-journal behavior while sharing stale-plan fixtures.
+  - [x] Keep exact package commands, approval rejection before execution, best-effort removal, cancellation, reverse rollback, and rollback-failure reporting without exact complete journal arrays.
+  - [x] Keep verified backup creation, deletion authorization, backup-before-write, automatic restore, manual recovery paths, and cancellation boundaries with shared failure fixtures.
+  - [x] Keep explicit recovery choices, immutable restore plans, verified restore, and stale-plan rejection.
+  - [x] Keep denied paths, final-tree validation, conflict markers, strict JSON, package policy, machine-only preservation, scanner failures, and redacted secret findings.
 
-- [ ] Finish `pi-sync` public integration and test-support cleanup.
-  - [ ] Reduce `test/ui.test.ts` to plan and receipt parity, representative decision categories, no-UI plan output, and exact full plan-ID authorization.
-  - [ ] Keep `test/smoke.test.ts` as the extension-load integration and add one missing-configuration command case that creates no transaction journal.
-  - [ ] Retain only temporary agent-directory and reduced Git-boundary helpers in `test/helpers.ts`.
-  - [ ] Update the explicit unit-test script for removed files and remove package dependencies that become unused.
+- [x] Finish `pi-sync` public integration and test-support cleanup.
+  - [x] Reduce `test/ui.test.ts` to plan and receipt parity, representative decision categories, no-UI plan output, and exact full plan-ID authorization.
+  - [x] Keep `test/smoke.test.ts` as the extension-load integration and add one missing-configuration command case that creates no transaction journal.
+  - [x] Retain only temporary agent-directory and reduced Git-boundary helpers in `test/helpers.ts`.
+  - [x] Update the explicit unit-test script for removed files and remove package dependencies that become unused.
 
 - [ ] Validate and release the changed extensions after all test edits are complete.
   - [ ] Run each changed package's typecheck, Biome check, retained tests, and package-specific static checks.

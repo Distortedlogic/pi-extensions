@@ -35,9 +35,10 @@ Align `pi-preload` and `pi-tree` on the same `AGENTS.yml` `extends`, `includes`,
   - [ ] Keep child repositories ignored by the meta `.gitignore` and give `pi-preload` and `pi-tree` the same extends value in the root `AGENTS.yml`.
   - [ ] Add the meta repository's tracked local paths to its `pi-tree.includes` and add generated or dependency paths to its `pi-tree.excludes`.
 
-- [ ] Update the Copier template and generated AGENTS schema
+- [ ] Update the Copier template, authoring skill, and generated AGENTS schema
   - [ ] Add a direct top-level `pi-tree` section to `template/AGENTS.yml` for the source, tests, skills, manifests, and configuration files created by the template.
   - [ ] Update the existing template unit test to require direct `pi-preload` and `pi-tree` sections and continue rejecting an obsolete `pi` wrapper.
+  - [ ] Update `pi-preload-authoring` to cover paired top-level `pi-preload` and `pi-tree` sections, shared `extends`, separate content and tree selections, repository-local `.gitignore` rules, exclude precedence, removal of `.treeignore`, and validation of both outputs.
   - [ ] Register the `pi-tree` configuration schema in the meta `agents.ts`, regenerate the schema, and pass `schema:check`.
 
 - [ ] Validate, publish, and activate the aligned extensions

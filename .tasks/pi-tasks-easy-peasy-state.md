@@ -1,28 +1,22 @@
 # Goal
 
-Rebuild the `pi-tasks` state layer so the Pi session branch is the only durable truth, one versioned `pi-tasks/state` snapshot entry carries all durable task state, and an `easy-peasy` store holds the in-memory projection plus two transient locks. Replace the hand-rolled run protocol with one commit contract, remove the duplicated state copies and the ad hoc identifiers (`planId`, `structuralRevision`, `fileRevision`, `batchId`, `bitmap`, `runStartEntryId`, `compressionOperationId`, `continuationId`), replace the hidden `/tasks __continue` command with an idempotent public `/tasks next`, move all compression concerns into one adapter module, split the large registration function into task-state, run-control, and Pi-integration modules, and update the existing test suites so the package passes typecheck, lint, tests, a clean production install, and the production extension-load check.
+Rebuild the `pi-tasks` state layer so the Pi session branch is the only durable truth, one versioned `pi-tasks/state` snapshot entry carries all durable task state, and an `easy-peasy` store holds the in-memory projection plus two transient locks. Replace the hand-rolled run protocol with one commit contract, remove the duplicated state copies and the ad hoc identifiers (`planId`, `structuralRevision`, `fileRevision`, `batchId`, `bitmap`, `runStartEntryId`, `compressionOperationId`, `continuationId`), replace the hidden `/tasks __continue` command with an idempotent public `/tasks next`, move all compression concerns into one adapter module, split the large registration function into task-state, run-control, and Pi-integration modules, and update the existing test suites so the package passes typecheck, lint, tests, a clean full install, a clean production install, and the production extension-load check.
 
 ## Work units
-
-- [ ] Pin easy-peasy and clear its integration gates
-  - [ ] Run `npm view easy-peasy version peerDependencies peerDependenciesMeta` and pin that exact version in `dependencies` in `pi-tasks/package.json` with no range.
-  - [ ] If `react` is a required peer, add `react` as an explicit pinned dependency; do not use `legacy-peer-deps` and do not use `npm audit fix --force`.
-  - [ ] Add a temporary probe module that imports only `createStore`, `action`, `thunk`, and `computed` and calls `createStore(model, { devTools: false })`, then confirm the named imports resolve under `NodeNext` with `verbatimModuleSyntax` through `npm run typecheck`.
-  - [ ] Run `npm test` and confirm `test/e2e.test.ts` still loads the production package without provider credentials, then delete the probe module.
 
 - [ ] Add the versioned durable snapshot schema and replay
   - [ ] Add `src/store/schema.ts` with `TASK_STATE_ENTRY = "pi-tasks/state"` and `TaskSnapshotSchema` fields `v`, `commitId`, `reason`, `source`, `goal`, `run`, and `fedWorkUnitIndex`, all objects exact with `additionalProperties: false`.
   - [ ] Add `EMPTY_SNAPSHOT` and the `TaskSource`, `TaskRun`, and `TaskSnapshot` types to `src/store/schema.ts`.
   - [ ] Add `src/store/replay.ts` with one `replay(branch)` loop that reads only `TASK_STATE_ENTRY`, skips an entry that fails `Value.Check`, keeps the last valid snapshot, and returns `structuredClone`.
-  - [ ] Move the pure reducer to `src/store/work-unit.ts` and change its signature to take `Goal | null` and return `{ goal, changed, op }`, with `feedEnabled` replaced by `run.status`.
+  - [ ] Move the pure reducer to `src/store/work-unit.ts`, change its signature to take `Goal | null` and return `{ goal, changed, op }`, and replace `feedEnabled` with `run.status`.
 
 - [ ] Add the easy-peasy store, injections, and commit contract
+  - [ ] Add `easy-peasy` to `dependencies` in `pi-tasks/package.json` pinned to the exact latest compatible version with no range, then run `npm install` in `pi-tasks`.
   - [ ] Add `src/store/index.ts` with the `TaskInjections` interface for `files`, `session`, `compression`, `clock`, and `cwd`, and with `createTaskStore(injections)` that sets `devTools: false` and `name: "pi-tasks"`.
-  - [ ] Add `src/store/model.ts` state fields `snapshot`, `completionClaimed`, and `stopping`, and computed values `workUnits`, `currentWorkUnit`, `progress`, and `completionToolsActive`.
+  - [ ] Add `src/store/model.ts` state fields `snapshot`, `completionClaimed`, and `stopping`, computed values `workUnits`, `currentWorkUnit`, `progress`, and `completionToolsActive`, and clone any snapshot that leaves the store because Immer freezes state.
   - [ ] Add the actions `applySnapshot`, `claimCompletion`, and `setStopping`.
   - [ ] Add the shared `commitWorkUnitAction` helper that reads `injections.session.latestSnapshot()`, applies the pure reducer, writes the Markdown file with the revision guard, appends one snapshot, then updates the store.
-  - [ ] Add the thunks `load`, `startRun`, `completeSubtask`, `completeWorkItem`, `feedNext`, `stopRun`, `clear`, and `finalize`, and read then set `completionClaimed` with no `await` between the two lines.
-  - [ ] Call `structuredClone` on every snapshot that leaves the store, because Immer freezes state.
+  - [ ] Add the thunks `load`, `startRun`, `completeSubtask`, `completeWorkItem`, `feedNext`, `stopRun`, `clear`, and `finalize`, read then set `completionClaimed` with no `await` between the two lines, and release the claim when a thunk fails.
 
 - [ ] Split the task-list, prompt, and widget modules
   - [ ] Move the Markdown parser into `src/task-list/parse.ts` without behavior change.
@@ -43,11 +37,11 @@ Rebuild the `pi-tasks` state layer so the Pi session branch is the only durable 
   - [ ] Make `feedNext` idempotent: return `stopped` when the run is not running, return `already_fed` for an automatic repeat, and re-send the prompt for a manual repeat.
   - [ ] Keep the existing guard that blocks `load`, `run`, `dump`, and `clear` during an active run or pending messages.
 
-- [ ] Switch the extension to the store on one flag day
+- [ ] Switch the extension registration to the store
   - [ ] Rewrite `src/index.ts` to register the tools, the command, and the events only.
   - [ ] Create one session-scoped store on `session_start`, hydrate it from `replay(branch)`, install the `store.subscribe` bridge, and render the widget.
   - [ ] Re-hydrate from `replay(branch)` on `session_tree` with no run guard.
-  - [ ] Release `completionClaimed` on `turn_end` and dispose the bridge and widget on `session_shutdown`.
+  - [ ] Release `completionClaimed` on `turn_end`, and dispose the bridge and the widget on `session_shutdown`.
   - [ ] Keep `pi.setActiveTools` and `ctx.ui.setWidget` calls only inside the bridge, keyed on `commitId` and `completionToolsActive`.
   - [ ] Delete the in-memory `state` and `ActiveRun` records, `TASK_LIST_STATE_ENTRY`, `TASK_RUN_START_ENTRY`, `TaskRunStart`, `TaskToolResultDetails`, `/tasks __continue`, and every removed identifier.
 
@@ -59,8 +53,6 @@ Rebuild the `pi-tasks` state layer so the Pi session branch is the only durable 
   - [ ] Delete the run-start, tool-result, batch, and compression builders from `test/helpers.ts`.
   - [ ] Run `npm run check` and fix every typecheck, lint, and test failure.
 
-- [ ] Verify the release and publish the change
-  - [ ] Add the migration note to `pi-tasks/README.md` that a session started before this change needs `/tasks load` again.
+- [ ] Verify the clean installs and publish the change
   - [ ] Run a clean full install, a clean production install, and the production extension-load check without provider credentials.
-  - [ ] Commit, push the `pi-tasks` repository, and run `pi update`.
-  - [ ] Open a follow-up note for `pi-compress` to accept a simpler settled-batch input so `src/compression.ts` shrinks.
+  - [ ] Commit the change, push the `pi-tasks` repository, and run `pi update`.

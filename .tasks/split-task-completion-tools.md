@@ -1,32 +1,23 @@
 # Goal
 
-Implement separate, narrowly scoped Pi tools for completing the current subtask and completing the current work item, keep parent and child completion state consistent through explicit transitions, expose the tools only during the existing task execution window, preserve existing task feeding and continuation behavior, and retain compatibility with stored results from the former generic task tool.
+Implement separate `complete_subtask` and `complete_work_item` tools in pi-tasks, keep work-item and subtask checkbox states synchronized for both completion paths, expose the tools only during the existing `/tasks run` execution window, and preserve the existing task feeding, continuation, compression, and persisted-state behavior.
 
 ## Work units
 
-- [ ] Define explicit subtask and work-item state transitions
-  - [ ] Replace the action-bearing task tool schema with an exact empty parameter schema for fixed-operation tools.
-  - [ ] Add separate `complete_subtask` and `complete_work_item` reducer actions and specific operation outcomes.
-  - [ ] Make subtask completion update only the current subtask while the parent work item remains `in_progress`.
-  - [ ] Make work-item completion require every direct subtask to be complete before it marks the parent complete.
-  - [ ] Permit the intermediate state where all subtasks are complete and the parent work item is still `in_progress`.
-  - [ ] Keep replay compatible with stored tool results whose tool name is `task`.
-- [ ] Replace the generic completion tool with two scoped tools
-  - [ ] Remove the registered `task` tool and register parameterless `complete_subtask` and `complete_work_item` tools with operation-specific descriptions and guidance.
-  - [ ] Add one transient execution-window gate that selects at most one completion tool from the current task state and preserves all unrelated active tools.
-  - [ ] Claim and close the execution window synchronously at the start of each completion call so duplicate calls cannot advance another subtask or work item.
-  - [ ] Open the execution window immediately before the existing subtask task prompt without changing that prompt flow or adding another feed function.
-  - [ ] Close the execution window on session restoration, tree navigation, task stop, final completion, and an agent settlement that did not use the expected completion tool.
-- [ ] Connect both tools to the existing continuation flow
-  - [ ] Keep the existing continuation behavior after a non-final subtask completion.
-  - [ ] After the last subtask completion, leave the work item incomplete, expose only `complete_work_item`, return the transition through the tool result, and do not queue the continuation yet.
-  - [ ] After explicit work-item completion, select the next existing task state and queue the existing continuation command.
-  - [ ] Accept results from both new tool names and the legacy `task` name when validating and replaying continuations.
-  - [ ] Preserve the existing task detail schema, compression integration, task-list file format, and persisted session protocol.
-- [ ] Align the existing task instruction and test coverage
-  - [ ] Change the existing subtask instruction to name `complete_subtask` without adding a work-item feed prompt.
-  - [ ] Update existing command, invalidation, reducer, task-list file, replay, sanitization, and test-helper cases for the two tool names and explicit parent transition.
-  - [ ] Verify that neither completion tool is active outside the existing task execution window and that only the state-appropriate tool is active inside it.
-  - [ ] Verify that the last subtask call does not complete the parent or queue continuation, and that the work-item call cannot succeed while a subtask is pending.
-  - [ ] Verify that old `task` results still replay and that duplicate completion calls cannot advance task state twice.
-  - [ ] Run the repository typecheck, lint, unit tests, end-to-end tests, clean install checks, and production extension-load check required by the repository.
+- [ ] Add synchronized subtask and work-item completion transitions
+  - [ ] Replace the generic action parameter with exact empty parameters for the two fixed-operation tools.
+  - [ ] Change the existing subtask completion action so it completes one current subtask and completes the parent work item when that was its last unchecked subtask.
+  - [ ] Add a work-item completion action that completes the current work item and every unchecked direct subtask in that work item.
+  - [ ] Keep the invariant that a completed work item has only completed subtasks and an incomplete work item has at least one incomplete subtask.
+- [ ] Replace and scope the completion tools without changing task feeding
+  - [ ] Replace the registered `task` tool with separate `complete_subtask` and `complete_work_item` tools that call the corresponding state transitions.
+  - [ ] Reuse the existing task-list write, next-task selection, result details, compression boundary, and continuation path after either tool succeeds.
+  - [ ] Activate both completion tools only while the existing `/tasks run` task execution is active, preserve unrelated active tools, and remove both completion tools at every existing stop or completion boundary.
+  - [ ] Claim the completion window before either tool mutates state so one model response cannot complete task state twice.
+  - [ ] Update continuation and replay filtering for both new tool names while retaining read compatibility for stored `task` results.
+- [ ] Align existing instructions and tests with the two-tool contract
+  - [ ] Change the existing execution instruction to name `complete_subtask` and `complete_work_item` without adding a feed, prompt, command, or continuation mode.
+  - [ ] Update existing reducer and task-list file tests for one-subtask completion, final-subtask parent synchronization, and whole-work-item synchronization.
+  - [ ] Update existing command, replay, invalidation, sanitization, and helper tests for the new tool names and shared continuation behavior.
+  - [ ] Verify that both tools are absent outside `/tasks run`, available only inside its execution window, and unable to apply two completion mutations from one model response.
+  - [ ] Run the existing pi-tasks typecheck, lint, unit tests, end-to-end tests, clean install checks, and production extension-load check.

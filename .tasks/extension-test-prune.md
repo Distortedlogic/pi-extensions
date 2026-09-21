@@ -1,6 +1,6 @@
 # Goal
 
-Bring every Pi extension test suite down to the minimal set that protects the behavior each extension owns: repair the broken pi-sync test script and its duplicated fixture, consolidate the duplicated pi-compress test harness, move pi-preload folding coverage from RPC end-to-end tests into the unit suite, simplify the pi-modes and pi-prompts tests that primarily exercise Pi or third-party packages, prune unused pi-tasks test helpers and close its compression coverage gaps, remove unused devDependencies, and finish with full verification and publication of every changed repository.
+Bring every Pi extension test suite down to the minimal set that protects the behavior each extension owns: repair the broken pi-sync test script and its duplicated fixture, consolidate the duplicated pi-compress test harness, move pi-preload folding coverage from RPC end-to-end tests into the unit suite, simplify the pi-modes, pi-prompts, and pi-tree tests that primarily exercise Pi or third-party packages, prune unused pi-tasks test helpers and close its compression coverage gaps, remove unused devDependencies, and finish with full verification and publication of every changed repository.
 
 ## Work units
 
@@ -34,10 +34,13 @@ Bring every Pi extension test suite down to the minimal set that protects the be
   - [ ] Add the feedNext compression-cancelled path test to pi-tasks/test/todo.command.test.ts
   - [ ] Run npm run check in pi-tasks
 
+- [ ] Trim the pi-tree shared-selection assertions
+  - [ ] Remove the resolveFileSelection mode assertions from pi-tree/test/unit.test.ts and keep only the leaf-equality assertion
+  - [ ] Run npm run check in pi-tree
+
 - [ ] Remove unused devDependencies
   - [ ] Run npm run check in each repository whose package.json changed
 
 - [ ] Verify and publish every changed repository
   - [ ] Run a clean full install and a clean production install in each changed repository
-  - [ ] Run the production extension-load check without provider credentials in each changed repository
   - [ ] Push each changed repository and run pi update for the changed extensions

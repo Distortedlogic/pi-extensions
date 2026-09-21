@@ -12,5 +12,5 @@
 		"types": ["node"],
 		"verbatimModuleSyntax": true
 	},
-	"include": [".forgejo/**/*.ts", "src/**/*.ts", "test/**/*.ts"]
+	"include": ["src/**/*.ts", "test/**/*.ts"]
 }

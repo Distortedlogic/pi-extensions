@@ -17,13 +17,5 @@
 			"semicolons": "always",
 			"trailingCommas": "all"
 		}
-	},
-	"overrides": [
-		{
-			"includes": [".pi/schemas/**"],
-			"formatter": {
-				"enabled": false
-			}
-		}
-	]
+	}
 }

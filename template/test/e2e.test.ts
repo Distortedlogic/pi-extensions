@@ -12,28 +12,6 @@ const projectDirectory = fileURLToPath(new URL("..", import.meta.url));
 const codingAgentEntry = fileURLToPath(import.meta.resolve("@earendil-works/pi-coding-agent"));
 const cliPath = join(dirname(codingAgentEntry), "cli.js");
 
-const SYSTEM_ENVIRONMENT_KEYS = [
-	"COMSPEC",
-	"HOME",
-	"PATH",
-	"PATHEXT",
-	"SystemRoot",
-	"TEMP",
-	"TMP",
-	"TMPDIR",
-	"USERPROFILE",
-	"WINDIR",
-] as const;
-
-function systemEnvironment(): NodeJS.ProcessEnv {
-	const environment: NodeJS.ProcessEnv = {};
-	for (const key of SYSTEM_ENVIRONMENT_KEYS) {
-		const value = process.env[key];
-		if (value !== undefined) environment[key] = value;
-	}
-	return environment;
-}
-
 test("packs and loads the production package in Pi without provider credentials", { timeout: 120_000 }, async (t) => {
 	const temporaryDirectory = await mkdtemp(join(tmpdir(), "pi-extension-e2e-"));
 	t.after(() => rm(temporaryDirectory, { recursive: true, force: true }));
@@ -43,7 +21,7 @@ test("packs and loads the production package in Pi without provider credentials"
 	await Promise.all([mkdir(archiveDirectory), mkdir(installDirectory), mkdir(agentDirectory)]);
 
 	const npm = process.platform === "win32" ? "npm.cmd" : "npm";
-	const environment = systemEnvironment();
+	const environment = process.env;
 	const { stdout: packOutput } = await execFileAsync(
 		npm,
 		["pack", "--json", "--pack-destination", archiveDirectory],

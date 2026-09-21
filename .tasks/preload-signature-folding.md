@@ -4,13 +4,13 @@ Add a `signatures` key to the `pi-preload` configuration section in `pi-preload/
 
 ## Work units
 
-- [ ] Add and merge the signatures configuration key
-  - [ ] In `pi-preload/agents.ts`, add `signatures: Type.Optional(STRING_LIST_SCHEMA)` to `configurationSchema`, keeping `additionalProperties: false`.
-  - [ ] In `pi-preload/src/index.ts`, add `signatures: string[]` to the `PreloadConfiguration` and `ProjectScope` types.
-  - [ ] In `loadPresetConfiguration()`, read `config.signatures ?? []`, include signature patterns in the absolute-pattern check beside `includes` and `excludes`, and merge inherited preset signatures before own signatures.
-  - [ ] In `loadConfiguration()`, read `config.signatures ?? []` and set each returned `ProjectScope.signatures` to `[...presets.flatMap((preset) => preset.signatures), ...ownSignatures]`.
+- [x] Add and merge the signatures configuration key
+  - [x] In `pi-preload/agents.ts`, add `signatures: Type.Optional(STRING_LIST_SCHEMA)` to `configurationSchema`, keeping `additionalProperties: false`.
+  - [x] In `pi-preload/src/index.ts`, add `signatures: string[]` to the `PreloadConfiguration` and `ProjectScope` types.
+  - [x] In `loadPresetConfiguration()`, read `config.signatures ?? []`, include signature patterns in the absolute-pattern check beside `includes` and `excludes`, and merge inherited preset signatures before own signatures.
+  - [x] In `loadConfiguration()`, read `config.signatures ?? []` and set each returned `ProjectScope.signatures` to `[...presets.flatMap((preset) => preset.signatures), ...ownSignatures]`.
 - [ ] Resolve signature selections into the candidate map
-  - [ ] Add `type SelectionMode = "full" | "signatures"` and, in `collectPreload()`, run a second `globby` call per scope over `scope.signatures` with the same options as the `includes` call: `cwd: scope.projectRoot`, `gitignore: sessionScope`, `ignoreFiles` for non-session scopes, `ignore` of `AGENTS.yml`, `PRELOAD_FILE`, `TREE_FILE`, `LOCK_FILE_GLOBS` and `scope.excludes`, `onlyFiles`, `followSymbolicLinks: false`, `unique`, `objectMode`, `stats`.
+  - [x] Add `type SelectionMode = "full" | "signatures"` and, in `collectPreload()`, run a second `globby` call per scope over `scope.signatures` with the same options as the `includes` call: `cwd: scope.projectRoot`, `gitignore: sessionScope`, `ignoreFiles` for non-session scopes, `ignore` of `AGENTS.yml`, `PRELOAD_FILE`, `TREE_FILE`, `LOCK_FILE_GLOBS` and `scope.excludes`, `onlyFiles`, `followSymbolicLinks: false`, `unique`, `objectMode`, `stats`.
   - [ ] Build the `candidates` map keyed by resolved absolute path with an added `mode` field, inserting signature matches before full matches so an overlapping path resolves to `"full"` without raising an error.
 - [ ] Add the language registry and the GritQL fold pattern pack
   - [ ] Add `pi-preload/src/languages.ts` mapping file extensions to `{ language, patternFile }` for `.js`, `.jsx`, `.mjs`, `.cjs`, `.ts`, `.tsx`, `.mts`, `.cts`, `.py`, `.rs`, and `.go`, returning `undefined` for any other extension.

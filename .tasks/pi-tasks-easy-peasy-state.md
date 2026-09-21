@@ -4,14 +4,14 @@ Rebuild the `pi-tasks` state layer so the Pi session branch is the only durable 
 
 ## Work units
 
-- [x] Add the versioned durable snapshot schema and replay
+- [ ] Add the versioned durable snapshot schema and replay
   - [x] Add `src/store/schema.ts` with `TASK_STATE_ENTRY = "pi-tasks/state"` and `TaskSnapshotSchema` fields `v`, `commitId`, `reason`, `source`, `goal`, `run`, and `fedWorkUnitIndex`, all objects exact with `additionalProperties: false`.
   - [x] Add `EMPTY_SNAPSHOT` and the `TaskSource`, `TaskRun`, and `TaskSnapshot` types to `src/store/schema.ts`.
   - [x] Add `src/store/replay.ts` with one `replay(branch)` loop that reads only `TASK_STATE_ENTRY`, skips an entry that fails `Value.Check`, keeps the last valid snapshot, and returns `structuredClone`.
   - [x] Add the pure reducer to `src/store/work-unit.ts` with a `Goal | null` input and a `{ goal, changed, op }` result.
   - [ ] Remove the old `TodoState` reducer, `feedEnabled`, `EMPTY_STATE`, and `replayFromBranch` implementation after the runtime and tests use the store.
 
-- [x] Add the easy-peasy store, injections, and commit contract
+- [ ] Add the easy-peasy store, injections, and commit contract
   - [x] Add `easy-peasy` to `dependencies` in `pi-tasks/package.json` pinned to the exact latest compatible version with no range, then run `npm install` in `pi-tasks`.
   - [x] Add `src/store/index.ts` with the `TaskInjections` interface for `files`, `session`, `compression`, `clock`, and `cwd`, and with `createTaskStore(injections)` that sets `devTools: false` and `name: "pi-tasks"`.
   - [x] Add `src/store/model.ts` state fields `snapshot`, `completionClaimed`, and `stopping`, computed values `workUnits`, `currentWorkUnit`, `progress`, and `completionToolsActive`, and clone any snapshot that leaves the store because Immer freezes state.

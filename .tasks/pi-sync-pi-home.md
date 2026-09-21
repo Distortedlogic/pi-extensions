@@ -15,26 +15,26 @@ Implement and activate `pi-sync` support for reproducing the persistent non-defa
   - [x] Deny `.config-sync`, secrets, package caches, dependency trees, binaries, sessions, caches, temporary files, generated stores, usage data, trust data, OAuth data, and installer markers.
   - [x] Update settings comparison and package planning to use `agent/settings.json`, preserve `/lastChangelogVersion` locally, and require exact package sources.
 
-- [ ] Make package installation precede synchronized file application.
+- [x] Make package installation precede synchronized file application.
   - [x] Reorder coordinator and journal stages so verified backup creation is followed by package execution, managed file application, and final verification.
   - [x] Select package operations by package risk instead of treating every code-execution action as a package operation.
   - [x] Keep `agent/settings.json` deferred to package execution when package actions exist and apply synchronized extension outputs after their packages install.
-  - [ ] Resume interrupted operations from the recorded package or file stage without repeating completed effects.
+  - [x] Resume interrupted operations from the recorded package or file stage without repeating completed effects.
 
-- [ ] Restore agent secrets from their existing Bitwarden entries.
-  - [ ] Extend the shared manifest with the `local-apps` BWS project identifier, explicit environment-name-to-BWS-key mappings, and the existing BWS key for the complete `auth.json` document.
-  - [ ] Fetch only mapped secrets through the official `bws` CLI with `pi.exec`, using the process `BWS_ACCESS_TOKEN` as the required bootstrap credential.
-  - [ ] Validate the complete secret set and `auth.json` JSON before writing `agent/.env` and `agent/auth.json` atomically with mode `0600`.
-  - [ ] Restore secrets after managed file verification and before reload without exposing values in output, plans, state, journals, receipts, or errors.
+- [x] Restore agent secrets from their existing Bitwarden entries.
+  - [x] Extend the shared manifest with the `local-apps` BWS project identifier, explicit environment-name-to-BWS-key mappings, and the existing BWS key for the complete `auth.json` document.
+  - [x] Fetch only mapped secrets through the official `bws` CLI with `pi.exec`, using the process `BWS_ACCESS_TOKEN` as the required bootstrap credential.
+  - [x] Validate the complete secret set and `auth.json` JSON before writing `agent/.env` and `agent/auth.json` atomically with mode `0600`.
+  - [x] Restore secrets after managed file verification and before reload without exposing values in output, plans, state, journals, receipts, or errors.
 
-- [ ] Migrate the current shared repository and baseline to Pi-root-relative paths.
-  - [ ] Convert each legacy agent-relative path to `agent/<path>` and add the managed root-level ACP, web-search, and Mermaid files.
-  - [ ] Replace the legacy `sync/<path>` shared layout and manifest with the reviewed `~/.pi`-mirroring layout.
-  - [ ] Import baseline fingerprints only for managed paths and leave the legacy clone, state, backups, and compatibility symlink unchanged until activation succeeds.
-  - [ ] Normalize the shared `agent/settings.json` package declarations to exact compatible npm versions and immutable Git commits.
+- [x] Migrate the current shared repository and baseline to Pi-root-relative paths.
+  - [x] Convert each legacy agent-relative path to `agent/<path>` and add the managed root-level ACP, web-search, and Mermaid files.
+  - [x] Replace the legacy `sync/<path>` shared layout and manifest with the reviewed `~/.pi`-mirroring layout.
+  - [x] Import baseline fingerprints only for managed paths and leave the legacy clone, state, backups, and compatibility symlink unchanged until activation succeeds.
+  - [x] Normalize the shared `agent/settings.json` package declarations to exact compatible npm versions and immutable Git commits.
 
 - [ ] Update existing tests and activate the migrated setup.
-  - [ ] Update existing file, state, transaction, package, migration, command, security, recovery, and UI tests for Pi-root paths and the new operation order.
-  - [ ] Cover managed and denied scopes, package-created file precedence, deterministic BWS restoration, mode `0600`, redacted failures, migration, recovery, and no-op reconciliation.
+  - [x] Update existing file, state, transaction, package, migration, command, security, recovery, and UI tests for Pi-root paths and the new operation order.
+  - [x] Cover managed and denied scopes, package-created file precedence, deterministic BWS restoration, mode `0600`, redacted failures, migration, recovery, and no-op reconciliation.
   - [ ] Pass typecheck, Biome, all tests, clean development and production installs, and the production extension-load check without provider credentials.
   - [ ] Push and update `pi-sync`, apply the reviewed migration and reconcile, reload Pi, and verify that the next reconcile has no changes.

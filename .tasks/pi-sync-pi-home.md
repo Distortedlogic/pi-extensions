@@ -1,54 +1,40 @@
 # Goal
 
-Implement and deploy a minimal extension of `pi-sync` that synchronizes the persistent non-default contents of `~/.pi`, including files installed there by other extensions, excludes disposable or reproducible data, restores `agent/.env` and `agent/auth.json` from mapped Bitwarden Secrets Manager keys without exposing values, migrates the current legacy configuration, and applies packages before synchronized files so a fresh machine can reproduce the current Pi setup safely and idempotently.
+Implement and activate `pi-sync` support for reproducing the persistent non-default contents of `~/.pi`, including files installed there by extensions, while excluding disposable data and restoring `agent/.env` and `agent/auth.json` from Bitwarden without placing secret values in Git or Pi synchronization artifacts.
 
 ## Work units
 
-- [ ] Change `pi-sync` to manage `~/.pi` as its single machine root.
-  - [ ] Keep `getActiveAgentDirectory()` for local state and calculate the Pi root once with `dirname(agentDirectory)` at the command boundary.
-  - [ ] Pass the Pi root to inventory, planning, backup, apply, restore, and verification while keeping `.config-sync` under the agent directory.
-  - [ ] Update all special path checks from agent-relative names such as `settings.json` to Pi-root-relative names such as `agent/settings.json`.
-  - [ ] Update loaded-resource detection for managed root files and `agent/**` resources.
+- [ ] Move synchronization from the agent directory to the existing `~/.pi` root.
+  - [ ] Calculate `piDirectory` once as `dirname(getActiveAgentDirectory())` in `commands.ts` and pass it to inventory, backup, apply, restore, and verification operations.
+  - [ ] Keep configuration, state, plans, journals, and backup metadata under the active agent directory.
+  - [ ] Change settings-specific and loaded-resource paths from `settings.json` and other agent-relative names to their `agent/**` paths.
 
-- [ ] Define the exact persistent-file scope and exclusions.
-  - [ ] Add the audited persistent files and globs for `acp.json`, `web-search.json`, Mermaid configuration, and managed `agent/**` configuration and resources.
-  - [ ] Include persistent extension-installed files under `agent/agents`, `agent/context-preload`, `agent/extensions`, `agent/prompts`, `agent/skills`, and JSON theme files.
-  - [ ] Permanently deny secrets, package caches, dependency trees, sessions, caches, temporary files, generated databases, usage data, trust data, installer markers, and platform binaries.
-  - [ ] Keep `agent/extension-data/**` excluded unless a specific stable configuration path is approved.
+- [ ] Configure the exact persistent and denied path scopes.
+  - [ ] Manage `acp.json`, `web-search.json`, the three current Mermaid source files, and persistent files under `agent/agents`, `agent/context-preload`, `agent/extensions`, `agent/prompts`, `agent/skills`, and `agent/themes`.
+  - [ ] Manage `agent/AGENTS.md`, `agent/APPEND_SYSTEM.md`, `agent/SYSTEM.md`, `agent/keybindings.json`, `agent/models.json`, and `agent/settings.json` when present.
+  - [ ] Deny `.config-sync`, secrets, package caches, dependency trees, binaries, sessions, caches, temporary files, generated stores, usage data, trust data, OAuth data, and installer markers.
+  - [ ] Update settings comparison and package planning to use `agent/settings.json`, preserve `/lastChangelogVersion` locally, and require exact package sources.
 
-- [ ] Adapt settings and package planning to the Pi-root-relative layout.
-  - [ ] Read and plan package declarations from `agent/settings.json` while preserving the active agent directory as the package command destination.
-  - [ ] Preserve `/lastChangelogVersion` as a machine-only setting and synchronize the remaining reviewed settings.
-  - [ ] Resolve every shared npm package to an exact compatible version and every shared Git package to an immutable commit before publication.
-  - [ ] Validate that each retained package source has a valid Pi manifest and remove invalid package declarations.
+- [ ] Make package installation precede synchronized file application.
+  - [ ] Reorder coordinator and journal stages so verified backup creation is followed by package execution, managed file application, and final verification.
+  - [ ] Select package operations by package risk instead of treating every code-execution action as a package operation.
+  - [ ] Keep `agent/settings.json` deferred to package execution when package actions exist and apply synchronized extension outputs after their packages install.
+  - [ ] Resume interrupted operations from the recorded package or file stage without repeating completed effects.
 
-- [ ] Apply package changes before synchronized files.
-  - [ ] Reorder coordinator and journal stages so package installation completes after backup creation and before managed file application.
-  - [ ] Update package execution to select only actions with package risk instead of all code-execution actions.
-  - [ ] Keep `agent/settings.json` deferred to package execution when package actions exist, then apply all other reviewed files over package-created outputs.
-  - [ ] Make recovery resume from the durable package-applied stage when later file application or verification stops.
+- [ ] Restore agent secrets from their existing Bitwarden entries.
+  - [ ] Extend the shared manifest with the `local-apps` BWS project identifier, explicit environment-name-to-BWS-key mappings, and the existing BWS key for the complete `auth.json` document.
+  - [ ] Fetch only mapped secrets through the official `bws` CLI with `pi.exec`, using the process `BWS_ACCESS_TOKEN` as the required bootstrap credential.
+  - [ ] Validate the complete secret set and `auth.json` JSON before writing `agent/.env` and `agent/auth.json` atomically with mode `0600`.
+  - [ ] Restore secrets after managed file verification and before reload without exposing values in output, plans, state, journals, receipts, or errors.
 
-- [ ] Restore agent secrets from Bitwarden without adding them to normal file inventory.
-  - [ ] Extend the shared manifest with the `local-apps` BWS project identifier, exact environment-key mappings, and one key for the complete `auth.json` document.
-  - [ ] Map the current global environment keys to exact same-name BWS keys and map `agent/auth.json` to `PI_AGENT_AUTH_JSON`.
-  - [ ] Use the official `bws` CLI through `pi.exec` with argument arrays, require the bootstrap `BWS_ACCESS_TOKEN`, and reject missing or duplicate key matches.
-  - [ ] Materialize the complete `.env` and validated `auth.json` atomically with mode `0600` after normal file verification and before Pi reload.
-  - [ ] Redact all secret values from errors, notices, plans, state, journals, and receipts.
+- [ ] Migrate the current shared repository and baseline to Pi-root-relative paths.
+  - [ ] Convert each legacy agent-relative path to `agent/<path>` and add the managed root-level ACP, web-search, and Mermaid files.
+  - [ ] Replace the legacy `sync/<path>` shared layout and manifest with the reviewed `~/.pi`-mirroring layout.
+  - [ ] Import baseline fingerprints only for managed paths and leave the legacy clone, state, backups, and compatibility symlink unchanged until activation succeeds.
+  - [ ] Normalize the shared `agent/settings.json` package declarations to exact compatible npm versions and immutable Git commits.
 
-- [ ] Convert the legacy synchronized layout and baseline.
-  - [ ] Prefix legacy agent-relative paths with `agent/` and retain root-level persistent files at their paths relative to `~/.pi`.
-  - [ ] Convert the shared repository from `sync/<path>` to the new root-mirroring layout with a reviewed candidate commit.
-  - [ ] Rebuild the baseline only from approved managed paths and omit denied runtime, package-cache, and secret paths.
-  - [ ] Keep the legacy clone, state, backups, and compatibility symlink unchanged until the new reconcile and restore checks pass.
-
-- [ ] Update existing tests for the new root, scope, order, migration, and secret restoration.
-  - [ ] Update file, state, plan, transaction, package-execution, migration, command, security, recovery, and UI tests without adding a new test suite.
-  - [ ] Test Pi-root path safety, exact managed and denied scopes, and final file precedence over package-created files.
-  - [ ] Test deterministic BWS fixtures for complete key matching, missing and duplicate keys, JSON validation, atomic mode-`0600` writes, and redacted failures.
-  - [ ] Test legacy path conversion, interrupted apply recovery, and a second reconcile with no planned changes.
-
-- [ ] Validate, release, and activate the completed setup.
-  - [ ] Pass typecheck, Biome, all tests, a clean development install, a clean production install, and a production extension-load check without provider credentials.
-  - [ ] Review the package contents and confirm that Git, state, journals, plans, and receipts contain no secret values or denied runtime files.
-  - [ ] Push the changed extension, update it from the remote source, and run the reviewed migration and reconcile on the current machine.
-  - [ ] Restore Bitwarden-backed secrets, reload Pi, verify required files and permissions, and confirm that the next reconcile is a no-op.
+- [ ] Update existing tests and activate the migrated setup.
+  - [ ] Update existing file, state, transaction, package, migration, command, security, recovery, and UI tests for Pi-root paths and the new operation order.
+  - [ ] Cover managed and denied scopes, package-created file precedence, deterministic BWS restoration, mode `0600`, redacted failures, migration, recovery, and no-op reconciliation.
+  - [ ] Pass typecheck, Biome, all tests, clean development and production installs, and the production extension-load check without provider credentials.
+  - [ ] Push and update `pi-sync`, apply the reviewed migration and reconcile, reload Pi, and verify that the next reconcile has no changes.

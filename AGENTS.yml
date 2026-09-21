@@ -37,3 +37,6 @@ pi-prompts:
         Prefer public functions, public Pi APIs, deterministic fixtures, and small integration tests. Keep end-to-end tests only when a real Pi process boundary is necessary. Do not propose arbitrary coverage targets or replacement tests for behavior that the extension does not own.
 
         Produce a file-specific implementation outline. Do not make changes or use tools.
+    review-custom:
+      body: |-
+        custom hand rolled extraneous nigger shit for no additional benefit than a more clean idiomatic native or 3rd package way that minimizes the amount of repo code that has custom hand rolled impls or orchestration code

@@ -4,21 +4,21 @@ Implement and activate `pi-sync` support for reproducing the persistent non-defa
 
 ## Work units
 
-- [ ] Move synchronization from the agent directory to the existing `~/.pi` root.
-  - [ ] Calculate `piDirectory` once as `dirname(getActiveAgentDirectory())` in `commands.ts` and pass it to inventory, backup, apply, restore, and verification operations.
-  - [ ] Keep configuration, state, plans, journals, and backup metadata under the active agent directory.
-  - [ ] Change settings-specific and loaded-resource paths from `settings.json` and other agent-relative names to their `agent/**` paths.
+- [x] Move synchronization from the agent directory to the existing `~/.pi` root.
+  - [x] Calculate `piDirectory` once as `dirname(getActiveAgentDirectory())` in `commands.ts` and pass it to inventory, backup, apply, restore, and verification operations.
+  - [x] Keep configuration, state, plans, journals, and backup metadata under the active agent directory.
+  - [x] Change settings-specific and loaded-resource paths from `settings.json` and other agent-relative names to their `agent/**` paths.
 
-- [ ] Configure the exact persistent and denied path scopes.
-  - [ ] Manage `acp.json`, `web-search.json`, the three current Mermaid source files, and persistent files under `agent/agents`, `agent/context-preload`, `agent/extensions`, `agent/prompts`, `agent/skills`, and `agent/themes`.
-  - [ ] Manage `agent/AGENTS.md`, `agent/APPEND_SYSTEM.md`, `agent/SYSTEM.md`, `agent/keybindings.json`, `agent/models.json`, and `agent/settings.json` when present.
-  - [ ] Deny `.config-sync`, secrets, package caches, dependency trees, binaries, sessions, caches, temporary files, generated stores, usage data, trust data, OAuth data, and installer markers.
-  - [ ] Update settings comparison and package planning to use `agent/settings.json`, preserve `/lastChangelogVersion` locally, and require exact package sources.
+- [x] Configure the exact persistent and denied path scopes.
+  - [x] Manage `acp.json`, `web-search.json`, the three current Mermaid source files, and persistent files under `agent/agents`, `agent/context-preload`, `agent/extensions`, `agent/prompts`, `agent/skills`, and `agent/themes`.
+  - [x] Manage `agent/AGENTS.md`, `agent/APPEND_SYSTEM.md`, `agent/SYSTEM.md`, `agent/keybindings.json`, `agent/models.json`, and `agent/settings.json` when present.
+  - [x] Deny `.config-sync`, secrets, package caches, dependency trees, binaries, sessions, caches, temporary files, generated stores, usage data, trust data, OAuth data, and installer markers.
+  - [x] Update settings comparison and package planning to use `agent/settings.json`, preserve `/lastChangelogVersion` locally, and require exact package sources.
 
 - [ ] Make package installation precede synchronized file application.
-  - [ ] Reorder coordinator and journal stages so verified backup creation is followed by package execution, managed file application, and final verification.
-  - [ ] Select package operations by package risk instead of treating every code-execution action as a package operation.
-  - [ ] Keep `agent/settings.json` deferred to package execution when package actions exist and apply synchronized extension outputs after their packages install.
+  - [x] Reorder coordinator and journal stages so verified backup creation is followed by package execution, managed file application, and final verification.
+  - [x] Select package operations by package risk instead of treating every code-execution action as a package operation.
+  - [x] Keep `agent/settings.json` deferred to package execution when package actions exist and apply synchronized extension outputs after their packages install.
   - [ ] Resume interrupted operations from the recorded package or file stage without repeating completed effects.
 
 - [ ] Restore agent secrets from their existing Bitwarden entries.

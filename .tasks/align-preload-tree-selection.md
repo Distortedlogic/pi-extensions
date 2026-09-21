@@ -2,32 +2,36 @@
 
 Align `pi-preload` and `pi-tree` on the same `AGENTS.yml` `extends`, `includes`, and `excludes` convention so the `pi-extensions` meta repository can keep child extension repositories Git-ignored while `pi-preload` loads their configured content, `pi-tree` emits one bounded combined tree, and `.treeignore` is fully replaced by explicit project configuration.
 
+Current status: The reference `pi-preload` resolver and most of the `pi-tree` selection and bounded-rendering path already exist. The remaining work is schema alignment, safe prefixes for extended repositories, missing verification, repository configuration migration, and release activation.
+
 ## Work units
 
-- [ ] Align `pi-preload` source resolution and file selection
-  - [ ] Keep the current public `pi-preload.extends` value shape and make its existing resolver the reference for configuration-relative paths, ordering, duplicate handling, and errors.
-  - [ ] Apply each resolved repository's own `.gitignore`, then `includes`, then `excludes`, with `excludes` taking precedence and symbolic-link traversal disabled.
-  - [ ] Preserve preset expansion, repository mapping, binary detection, rendering, content order, and preload limits after file selection.
-  - [ ] Update the existing `pi-preload` tests to cover a parent-Git-ignored extended repository and include/exclude precedence.
+- [x] Align `pi-preload` source resolution and file selection
+  - [x] Keep the current public `pi-preload.extends` value shape and make its existing resolver the reference for configuration-relative paths, ordering, duplicate handling, and errors.
+  - [x] Apply each resolved repository's own `.gitignore`, then `includes`, then `excludes`, with `excludes` taking precedence and symbolic-link traversal disabled.
+  - [x] Preserve preset expansion, repository mapping, binary detection, rendering, content order, and preload limits after file selection.
+  - [x] Update the existing `pi-preload` tests to cover a parent-Git-ignored extended repository and include/exclude precedence.
 
-- [ ] Add aligned `AGENTS.yml` configuration support to `pi-tree`
-  - [ ] Define and validate `pi-tree.extends`, `pi-tree.includes`, and `pi-tree.excludes` with the same field shapes and path rules as `pi-preload`.
-  - [ ] Load the trusted project configuration with `read-yaml-file` and TypeBox and resolve extended repositories without applying the parent repository's `.gitignore`.
-  - [ ] Add the `pi-tree` schema to `agents.ts`, TypeScript inputs, and package files, and add `read-yaml-file` as a runtime dependency.
-  - [ ] Remove `.treeignore` loading, delete the bundled `.treeignore`, remove it from package files, remove the `ignore` dependency, and update the package lock.
+- [ ] Finish aligned `AGENTS.yml` configuration support in `pi-tree`
+  - [ ] Replace direct `yaml` parsing and custom field checks with `read-yaml-file` and TypeBox validation that matches the `pi-preload` field shapes and path rules.
+  - [x] Keep the trusted-project gate and resolve each extended repository independently of the parent repository's `.gitignore`.
+  - [ ] Add the `pi-tree` schema to `agents.ts`, TypeScript inputs, and package files, add `read-yaml-file` as a pinned runtime dependency, and remove `yaml` if it is no longer used.
+  - [x] Keep `.treeignore` loading and shipping removed, keep the `ignore` dependency removed, and keep the package lock consistent.
 
-- [ ] Generate one combined bounded tree from the configured repositories
-  - [ ] Select each repository's paths with its local `.gitignore`, `includes`, and `excludes`, and normalize the results to stable repository-relative paths.
-  - [ ] Prefix extended paths with their configured repository path or name, merge duplicate paths, and sort the complete virtual path list.
-  - [ ] Pass the merged paths through the existing depth-based `tree --fromfile` renderer with one global 16 KiB output allocation.
-  - [ ] Preserve the existing deadline and temporary cleanup, write only `<cwd>/TREE.txt`, and inject only one hidden `pi-tree` message per session.
+- [ ] Complete one combined bounded tree from the configured repositories
+  - [x] Select each repository's paths with its local `.gitignore`, `includes`, and `excludes`, with exclude precedence and symbolic-link traversal disabled.
+  - [ ] Map external and sibling extended repositories to a safe, stable virtual prefix based on the configured repository path or name.
+  - [x] Merge duplicate virtual paths and sort the complete virtual path list.
+  - [x] Pass the merged paths through the existing depth-based `tree --fromfile` renderer with one global 16 KiB output allocation.
+  - [x] Preserve the existing deadline and temporary cleanup, write only `<cwd>/TREE.txt`, and inject only one hidden `pi-tree` message per session.
 
-- [ ] Verify `pi-tree` configuration and combined-tree behavior
-  - [ ] Update the existing unit tests with a meta repository whose `.gitignore` hides an extended child repository and confirm that the child still appears through `pi-tree.extends`.
-  - [ ] Test include selection, exclude precedence, repository-local `.gitignore`, stable ordering, duplicate paths, and disabled symbolic-link traversal.
+- [ ] Complete `pi-tree` configuration and combined-tree verification
+  - [ ] Add a meta-repository test whose `.gitignore` hides an extended child repository and confirm that the child still appears through `pi-tree.extends`.
+  - [x] Keep the existing coverage for include selection, exclude precedence, repository-local `.gitignore`, extends cycles, disabled symbolic-link traversal, and bounded output.
+  - [ ] Add focused coverage for stable ordering, duplicate extends or paths, and external or sibling repository prefixes.
   - [ ] Test that `.treeignore` is unused and unshipped while equivalent `pi-tree.excludes` rules remove the configured paths.
-  - [ ] Test several repository prefixes, one output file, one custom message, and the global 16 KiB limit.
-  - [ ] Keep the existing credential-free Pi extension-load test and update it for the required `AGENTS.yml` configuration.
+  - [ ] Test several repository prefixes in one output file and one custom message.
+  - [x] Keep the credential-free Pi extension-load test with required `AGENTS.yml` configuration and the global 16 KiB limit test.
 
 - [ ] Migrate extension and meta-repository configuration
   - [ ] Add `pi-tree` sections to `pi-compress`, `pi-env`, `pi-modes`, `pi-preload`, `pi-prompts`, `pi-steering`, `pi-sync`, `pi-tasks`, `pi-tree`, and the other extension repositories named by the meta extends list.
@@ -37,7 +41,7 @@ Align `pi-preload` and `pi-tree` on the same `AGENTS.yml` `extends`, `includes`,
 
 - [ ] Update the Copier template, authoring skill, and generated AGENTS schema
   - [ ] Add a direct top-level `pi-tree` section to `template/AGENTS.yml` for the source, tests, skills, manifests, and configuration files created by the template.
-  - [ ] Update the existing template unit test to require direct `pi-preload` and `pi-tree` sections and continue rejecting an obsolete `pi` wrapper.
+  - [ ] Add template validation to an existing meta check so it requires direct `pi-preload` and `pi-tree` sections and rejects an obsolete `pi` wrapper.
   - [ ] Update `pi-preload-authoring` to cover paired top-level `pi-preload` and `pi-tree` sections, shared `extends`, separate content and tree selections, repository-local `.gitignore` rules, exclude precedence, removal of `.treeignore`, and validation of both outputs.
   - [ ] Register the `pi-tree` configuration schema in the meta `agents.ts`, regenerate the schema, and pass `schema:check`.
 

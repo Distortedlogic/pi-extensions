@@ -7,8 +7,8 @@ Create and adopt `pi-agents-yaml` as the single shared implementation for readin
 - [ ] Create the standalone `pi-agents-yaml` ESM utility package.
   - [ ] Create a separate repository with no Pi extension entry point and export public document, section, source-discovery, graph-resolution, and file-selection modules.
   - [ ] Add the repository-standard `typecheck`, `lint`, `test`, `format`, and `check` scripts using Node test, TypeScript, and Biome.
-  - [ ] Pin exact latest-compatible runtime, peer, and development dependencies and commit the package lock file.
-  - [ ] Define shared TypeBox schema fragments for `extends`, `presets`, `includes`, `signatures`, and `excludes` and public types for loaded sections, source roots, graph nodes, and selected files.
+  - [ ] Use `yaml` for parsing, `globby` for file selection, TypeBox for validation, and Pi's native package APIs for source discovery; pin exact latest-compatible dependencies and commit the lock file.
+  - [ ] Export the canonical `pi-preload` configuration schema and public types for loaded sections, source roots, graph nodes, and selected files while `loadAgentsSection()` accepts each other consumer's own TypeBox schema.
 
 - [ ] Implement strict `AGENTS.yml` document loading and ordered source discovery.
   - [ ] Implement `parseAgentsYaml()` and `loadAgentsSection()` with the `yaml` package, caller-supplied TypeBox schemas, and errors that name the source file and requested section.
@@ -37,7 +37,7 @@ Create and adopt `pi-agents-yaml` as the single shared implementation for readin
   - [ ] Replace local YAML loading, extends traversal, preset resolution, default exclusions, and glob selection with direct utility-package calls.
   - [ ] Keep context rendering, media loading, signature folding, byte limits, hidden context injection, and `PRELOAD.md` output in `pi-preload`.
   - [ ] Delete moved implementations and remove dependencies and packaged presets that are no longer used.
-  - [ ] Update the existing unit and end-to-end tests and pass all `pi-preload` checks and clean installation checks.
+  - [ ] Update the existing unit and end-to-end tests to cover the same preload behavior through the shared package APIs.
 
 - [ ] Migrate `pi-tree` to the exact shared file selection.
   - [ ] Pin the same reviewed `pi-agents-yaml` commit and update `package-lock.json`.
@@ -45,34 +45,35 @@ Create and adopt `pi-agents-yaml` as the single shared implementation for readin
   - [ ] Build `TREE.txt` only from the shared selected display paths and their required parent directory rows.
   - [ ] Include both full-selected and signature-selected files and exclude preload context blocks because they are not files.
   - [ ] Update the existing tree tests to assert that tree file leaves equal preload-selected file paths and that no unselected sentinel appears.
-  - [ ] Remove unused `yaml` and `globby` dependencies and pass all `pi-tree` checks and clean installation checks.
+  - [ ] Remove unused `yaml` and `globby` dependencies and update the lock file.
 
 - [ ] Migrate `pi-prompts` to the shared document and source APIs.
   - [ ] Replace package-root discovery, package-name filtering, YAML parsing, and section validation with `discoverAgentsSources()` and `loadAgentsSection()`.
   - [ ] Keep Markdown prompt loading, duplicate-name checks, chain resolution, editor cycling, and follow-up delivery in `pi-prompts`.
   - [ ] Preserve user-package, trusted project-package, and project-root precedence through the ordered shared source records.
-  - [ ] Update the existing unit and integration tests, remove superseded dependencies, update the lock file, and pass all `pi-prompts` checks.
+  - [ ] Update the existing unit and integration tests for trusted sources, source precedence, duplicate names, missing chain members, and reload cleanup.
+  - [ ] Remove superseded dependencies and update the lock file.
 
 - [ ] Migrate `pi-modes` to the shared document and source APIs.
   - [ ] Replace local source discovery, YAML reads, parse errors, and section validation with `pi-agents-yaml` calls.
   - [ ] Keep mode precedence, editor suffix handling, terminal input handling, events, and cleanup in `pi-modes`.
   - [ ] Update the existing mode tests for validation, trust, source precedence, reload, and production loading.
-  - [ ] Remove superseded dependencies, update the lock file, and pass all `pi-modes` checks.
+  - [ ] Remove superseded dependencies and update the lock file.
 
 - [ ] Migrate `pi-tasks` package-local prompt configuration to the shared loader.
-  - [ ] Replace the `read-yaml-file` call in `pi-tasks/src/run/prompt.ts` with `loadAgentsSection()` and a strict schema for the required prompt body.
+  - [ ] Replace the `read-yaml-file` call in `pi-tasks/src/run/prompt.ts` with top-level `await` on `loadAgentsSection()` and a strict schema for the required prompt body.
   - [ ] Preserve `EXECUTE_TASK_PROMPT`, `feedPrompt()`, sanitization, and task execution behavior.
   - [ ] Update the existing prompt and task tests for valid and invalid configuration loading.
-  - [ ] Remove `read-yaml-file`, update the lock file, and pass all `pi-tasks` checks and clean installation checks.
+  - [ ] Remove `read-yaml-file` and update the lock file.
 
-- [ ] Align schemas and tracked configuration with shared selection ownership.
-  - [ ] Update the meta schema generator and extension schema modules to compose the shared schema fragments without duplicate field declarations.
+- [ ] Align generated schemas and tracked configuration with shared selection ownership.
+  - [ ] Make the generated `pi-preload` section schema use the canonical configuration schema exported by `pi-agents-yaml` while retaining the existing extension-owned schemas for prompts and modes.
   - [ ] Remove tracked `pi-tree` selection configuration and keep one canonical `pi-preload` extends, preset, include, signature, and exclude graph.
   - [ ] Keep `template/AGENTS.yml` on the canonical selection section so generated repositories require no separate tree-selection block.
   - [ ] Regenerate the checked-in schemas and pass the meta repository schema check.
 
 - [ ] Validate and deploy the dependency chain.
   - [ ] Run the shared meta-repository fixture through production loads of `pi-preload` and `pi-tree` and compare `PRELOAD.md` file markers with `TREE.txt` file leaves.
-  - [ ] Run typecheck, Biome, existing tests, clean full install, clean production install, and provider-free extension-load checks in every changed repository.
+  - [ ] Run typecheck, Biome, existing tests, clean full install, and clean production install in every changed repository, plus provider-free extension-load checks in each changed extension repository.
   - [ ] Confirm every consumer uses the same exact remote `pi-agents-yaml` commit and no consumer uses a local path dependency.
   - [ ] Commit and push the changed consumer repositories in dependency order, then run `pi update` for each changed Pi extension as the final action.

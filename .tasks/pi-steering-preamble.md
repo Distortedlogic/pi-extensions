@@ -1,34 +1,23 @@
 # Goal
 
-Implement a deterministic Pi steering acknowledgement that records the exact required preamble once after every completed user message, displays it like an assistant acknowledgement without an extra model turn, excludes it from effective model context, preserves the existing ten-tool-call steering behavior, and keeps context-management behavior, package metadata, project instructions, validation, and installed extensions consistent.
+Replace the model-generated per-user preamble with one deterministic `pi-steering` session message that contains the exact required text, appears after each completed user message without starting or steering a model turn, stays out of effective model context, preserves ten-tool-call steering, remains compatible with `pi-compress`, and makes the old `AGENTS.md` output instruction unnecessary.
 
 ## Work units
 
-- [ ] Prepare the `pi-steering` package dependencies for native custom-message rendering.
-  - [ ] Add `@earendil-works/pi-ai` and `@earendil-works/pi-tui` to `pi-steering/package.json` as Pi-provided peer dependencies with compatible ranges.
-  - [ ] Resolve the latest compatible development versions, pin them exactly in `devDependencies`, and update the existing lock file when the repository uses one.
-- [ ] Implement the persistent user-message acknowledgement in `pi-steering/src/index.ts`.
-  - [ ] Define exported constants for the stable `pi-steering/preamble` custom type and the exact required preamble text.
-  - [ ] Keep the existing user-message tool-counter reset and append one visible custom message only after each completed user message.
-  - [ ] Send the acknowledgement with `triggerTurn: false` and without `deliverAs` so it cannot start or steer a model turn.
-  - [ ] Register a native custom-message renderer that shows the stored message content as a plain assistant-style acknowledgement.
-  - [ ] Filter only `pi-steering/preamble` custom messages from model context while retaining them in durable session history.
-  - [ ] Preserve the existing hidden steering message and its delivery after each ten completed tool calls.
-- [ ] Align `pi-compress` with the new presentation-only session entry.
-  - [ ] Exclude `pi-steering/preamble` custom messages from the effective context snapshot while retaining them in the complete entry and branch snapshots.
-  - [ ] Update the existing `pi-compress` tests to prove that turn grouping, range rewriting, and context-consumer totals ignore the presentation-only acknowledgement.
-  - [ ] Verify that crop and compression rewrites do not leave an acknowledgement orphaned on the rebuilt active branch.
-- [ ] Remove model-owned preamble generation from the project instructions.
-  - [ ] Delete the `AGENTS.md` instruction that requires the model to repeat the exact preamble after every user message.
-  - [ ] Retain the substantive instruction-following rules so the extension owns only deterministic acknowledgement output, not behavioral policy.
-- [ ] Validate the complete behavior with targeted package and integration checks.
-  - [ ] Run type checking and linting for `pi-steering`, then confirm that the package loads without provider credentials.
-  - [ ] Run the existing `pi-compress` type checks, lint checks, and tests after the effective-context change.
-  - [ ] Verify through a local Pi or RPC session that each new user message produces exactly one durable acknowledgement in the correct order and no additional model turn.
-  - [ ] Verify that reload, branch navigation, assistant messages, tool results, and custom messages do not create duplicate acknowledgements.
-  - [ ] Verify that ten completed tool calls still produce one hidden steering delivery and that a new user message resets its counter.
-  - [ ] Complete clean full-install, production-install, and production extension-load checks for each changed extension.
-- [ ] Deliver the validated extension changes through the repository workflow.
-  - [ ] Commit each changed repository with a minimal accurate message after all checks pass.
-  - [ ] Push the changed extension repositories to their remotes before installation.
-  - [ ] Run `pi update` for the changed extensions and confirm that the installed copies load successfully.
+- [ ] Implement the visible acknowledgement in `pi-steering`.
+  - [ ] Add `@earendil-works/pi-tui` as a compatible peer dependency and pin its latest compatible development version for the native message renderer.
+  - [ ] Export constants for the exact preamble text and the stable `pi-steering/preamble` custom type.
+  - [ ] On each user `message_end`, append one visible custom message with `triggerTurn: false` and no `deliverAs` option.
+  - [ ] Register a `Text` message renderer for `pi-steering/preamble` so the stored content appears as a plain acknowledgement.
+  - [ ] Remove `pi-steering/preamble` messages from the `context` event message list while retaining them in session history.
+  - [ ] Keep the current user-message counter reset and hidden steering delivery after every ten completed tool calls.
+- [ ] Make `pi-compress` ignore the presentation-only acknowledgement.
+  - [ ] Filter `pi-steering/preamble` entries from `snapshotSession().contextEntries` without removing them from complete entries or branch history.
+  - [ ] Extend the existing `pi-compress` tests to cover turn grouping, range rewrites, and consumer totals with a stored preamble entry.
+- [ ] Remove the obsolete model-output instruction.
+  - [ ] Delete only the `AGENTS.md` rule that requires the model to repeat the preamble after each user message.
+  - [ ] Keep the existing rules that require the agent to follow the user's instructions.
+- [ ] Validate the changed extensions.
+  - [ ] Run `npm run check` in `pi-steering` and `pi-compress`.
+  - [ ] Confirm with Pi RPC and no provider credentials that one user message stores one visible `pi-steering/preamble` entry without an additional turn.
+  - [ ] Complete clean full-install, production-install, and production extension-load checks for both changed extensions.

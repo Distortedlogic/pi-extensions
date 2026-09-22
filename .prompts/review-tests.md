@@ -1,0 +1,15 @@
+Review all Pi extension test code available in the agent context.
+
+The test suites must be minimal and focused on critical behavior that each Pi extension owns. Identify tests that are duplicated, excessive, implementation-specific, or primarily test Pi, Node.js, external tools, or third-party packages.
+
+For each extension, provide:
+
+1. Tests that must remain and the critical behavior they protect.
+2. Tests that should be removed.
+3. Tests that should be combined or simplified.
+4. Test helpers, fixtures, scripts, and dependencies that will become unused.
+5. Any missing critical extension-specific coverage.
+
+Prefer public functions, public Pi APIs, deterministic fixtures, and small integration tests. Keep end-to-end tests only when a real Pi process boundary is necessary. Do not propose arbitrary coverage targets or replacement tests for behavior that the extension does not own.
+
+Produce a file-specific implementation outline. Do not make changes or use tools.

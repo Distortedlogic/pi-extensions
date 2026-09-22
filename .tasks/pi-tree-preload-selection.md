@@ -1,43 +1,53 @@
 # Goal
 
-Implement separate, validated `pi-preload` and `pi-tree` AGENTS.yml sections with defaults suited to each extension: preload content remains explicitly selected and token-safe, an explicitly present empty tree section selects the full Git-filtered project tree, and both extensions share only generic YAML, graph, and file-selection utilities without cross-section fallback.
+Implement separate, validated `pi-preload` and `pi-tree` AGENTS.yml sections with extension-specific defaults and no cross-section fallback: preload content remains explicitly selected and token-safe, a present empty tree section selects the full Git-filtered project tree, extended repositories receive safe stable tree prefixes, and both extensions preserve their existing bounded output behavior through shared generic YAML, graph, and file-selection utilities.
 
 ## Work units
 
-- [ ] Define independent section contracts and caller-controlled selection defaults in `pi-agents-yaml`
-  - [ ] Keep the strict `PiPreloadConfigurationSchema` fields `contexts`, `excludes`, `extends`, `includes`, `presets`, and `signatures`, and add a strict `PiTreeConfigurationSchema` that permits only `excludes`, `extends`, and `includes`.
-  - [ ] Change shared file selection to accept caller-supplied default includes and excludes instead of always applying `DEFAULT_PRELOAD_EXCLUDES`.
-  - [ ] Remove the hard-coded `pi-preload` branch from generic graph resolution while preserving stable ordering, canonical cycle detection, repository-relative extends, and cancellation.
-  - [ ] Define section absence as disabled, prohibit fallback to another section, and report an explicit error when an extends target lacks the requested section.
+- [ ] Define independent section contracts and exact default semantics in `pi-agents-yaml`
+  - [ ] Keep `PiPreloadConfigurationSchema` strict with `contexts`, `excludes`, `extends`, `includes`, `presets`, and `signatures`, and add a strict `PiTreeConfigurationSchema` with only `excludes`, `extends`, and `includes`.
+  - [ ] Define a missing section as disabled, `pi-preload: {}` as no selected content, `pi-tree: {}` as `includes: ["**/*"]`, `pi-tree.includes: []` as no selected paths, and any explicit tree includes as a replacement for the default glob.
+  - [ ] Change shared file selection to accept caller-supplied default includes and excludes, merge configured excludes after defaults, and keep excludes authoritative over all selected paths.
+  - [ ] Add a caller-supplied per-node section resolver to generic graph resolution so `pi-preload` can expand presets before resolving each node's extends while `pi-tree` uses the parsed tree value unchanged.
+  - [ ] Require every explicit extends target to contain the requested section and report its declaring AGENTS.yml path when that section is absent.
 
-- [ ] Lock the shared behavior with focused `pi-agents-yaml` tests
-  - [ ] Add fixtures containing different `pi-preload` and `pi-tree` values and prove that each requested section resolves without reading the other.
-  - [ ] Cover empty-section defaults, explicit include replacement, exclude precedence, repository-local `.gitignore`, ignored extended repositories, stable deduplication, symbolic-link rejection, and extends cycles.
-  - [ ] Verify that preload and tree callers can supply different default include and exclude sets through the same public selector.
+- [ ] Lock generic graph and selection behavior with focused `pi-agents-yaml` tests
+  - [ ] Add fixtures with different `pi-preload` and `pi-tree` sections and prove that each resolver reads only its requested section.
+  - [ ] Cover missing, empty, explicit-empty, explicit-include, and excluded selections for both caller-provided default sets.
+  - [ ] Verify per-node preload preset expansion, repository-relative extends, repository-local `.gitignore`, parent-ignored child repositories, exclude precedence, stable ordering, duplicate suppression, symbolic-link rejection, cancellation, and cycle errors.
+  - [ ] Verify that an explicit extends target without the requested section fails instead of silently disappearing or falling back to the other section.
 
-- [ ] Apply token-safe defaults only to `pi-preload`
-  - [ ] Keep default includes, signatures, contexts, presets, and extends empty so an empty `pi-preload` section injects no content.
-  - [ ] Extend preload defaults to exclude `.git`, `AGENTS.yml`, `.tasks/**`, `PRELOAD.md`, `TREE.txt`, and the existing dependency lock-file patterns.
-  - [ ] Keep `pi-extension` and `dioxus-rust` opt-in and preserve per-node preset expansion, context rendering, signature folding, binary handling, content ordering, and byte limits.
-  - [ ] Update existing `pi-preload` tests to prove the new defaults without widening any configured project selection.
+- [ ] Apply token-safe defaults and per-node presets only to `pi-preload`
+  - [ ] Keep default includes, signatures, contexts, presets, and extends empty so preload never discovers content implicitly.
+  - [ ] Set preload defaults to exclude `.git`, `AGENTS.yml`, `.tasks/**`, `PRELOAD.md`, `TREE.txt`, and the existing dependency lock-file patterns.
+  - [ ] Pass the preload preset resolver into generic graph resolution so `pi-extension` and `dioxus-rust` remain opt-in and expand independently in every configured root.
+  - [ ] Preserve context rendering, signature folding, repository mapping, binary handling, content ordering, file and total byte limits, `PRELOAD.md` output, and one hidden preload message per session.
+  - [ ] Update existing `pi-preload` tests to prove the defaults and per-node preset behavior without widening any configured project selection.
 
-- [ ] Make `pi-tree` consume only `pi-tree` with path-oriented defaults
-  - [ ] Update `pi-tree/src/selection.ts` to request `pi-tree` with `PiTreeConfigurationSchema` and never inspect `pi-preload`.
-  - [ ] Use `**/*` only when a present `pi-tree` section omits `includes`, and make an explicit `includes` list replace that default.
-  - [ ] Default tree excludes to `.git`, `AGENTS.yml`, `.tasks/**`, `.pi/readcache/**`, `.pi/tmp/**`, `PRELOAD.md`, and `TREE.txt` without excluding lock files, tests, manifests, or tracked configuration names.
-  - [ ] Preserve repository-local `.gitignore`, safe path projection, deterministic ordering, the single 16 KiB tree allocation, temporary cleanup, and one hidden tree message per session.
-  - [ ] Update existing `pi-tree` tests to cover absent, empty, narrowed, excluded, and extended `pi-tree` sections and to prove that preload-only fields are rejected.
+- [ ] Make `pi-tree` consume only `pi-tree` and produce one safe combined tree
+  - [ ] Update `pi-tree/src/selection.ts` to request `pi-tree` with `PiTreeConfigurationSchema`, tree-specific defaults, and no preset resolver.
+  - [ ] Set tree defaults to include `**/*` and exclude `.git`, `AGENTS.yml`, `.tasks/**`, `.pi/readcache/**`, `.pi/tmp/**`, `PRELOAD.md`, and `TREE.txt` while retaining lock files, tests, manifests, and tracked configuration names.
+  - [ ] Keep session-root paths relative to the session root, map extended roots inside it to their canonical root-relative prefixes, and map external or sibling roots to stable `external/<directory-name>` prefixes with collision errors.
+  - [ ] Reject every virtual path containing `..`, merge duplicate virtual paths, and sort the complete path set before rendering.
+  - [ ] Preserve the trusted-project gate, one global 16 KiB depth-bounded `tree --fromfile` render, deadline, temporary cleanup, only `<cwd>/TREE.txt` output, and one hidden tree message per session.
+  - [ ] Update existing `pi-tree` tests for absent, empty, explicit-empty, narrowed, excluded, parent-ignored extended, external-prefix, prefix-collision, duplicate-path, ordering, symlink, cycle, and global-limit behavior.
 
-- [ ] Migrate current AGENTS.yml files to explicit tree configuration
-  - [ ] Add `pi-tree: {}` to extension and application repositories that should expose their complete tracked structure, and retain scoped `pi-tree.includes` where the current tree is intentionally narrow.
-  - [ ] Add the missing `pi-tree` section to `self-system/self-hosting/AGENTS.yml` and keep the root `self-system` tree extends explicit for both child roots.
-  - [ ] Give the `pi-extensions` meta repository explicit local tree includes plus the same child repository extends, while each child extension resolves its own tree section.
-  - [ ] Remove repeated preload `.tasks` exclusions after the preload default supplies them, without changing project-specific exclusions such as `operations/snapshots`.
-  - [ ] Update `template/AGENTS.yml`, checked AGENTS.yml schemas, and the existing authoring skill to describe both independent sections and their different empty-section behavior.
+- [ ] Migrate every current AGENTS.yml to explicit tree configuration without widening large projects
+  - [ ] Add `pi-tree: {}` to the small TypeScript extension repositories `pi-agents-yaml`, `pi-compress`, `pi-cron`, `pi-env`, `pi-modes`, `pi-preload`, `pi-prompts`, `pi-steering`, `pi-sync`, `pi-tasks`, and `pi-tree`.
+  - [ ] Keep `pi-blend`, `analytical-theism`, `knowledge-rag`, and the Gabb project scoped by copying their current preload includes into independent tree includes instead of selecting all assets, corpora, artifacts, or research paths.
+  - [ ] Keep the scoped `self-system/self-ai` tree section, add a scoped tree section to `self-system/self-hosting` from its current preload selection, and give the `self-system` root explicit local includes plus tree extends for both children.
+  - [ ] Give the `pi-extensions` root tree section its current child extends and explicit local includes for package metadata, Copier resources, the template, prompts, skills, and the tracked task plans.
+  - [ ] Remove repeated preload `.tasks` exclusions only after the preload default is active, while retaining project-specific exclusions such as `operations/snapshots` in the corresponding section.
 
-- [ ] Validate and release the coordinated package changes
+- [ ] Update generated configuration resources and the extension template
+  - [ ] Add independent top-level `pi-preload` and `pi-tree` sections to `template/AGENTS.yml`, with explicit preload globs and an empty tree section for complete tracked structure.
+  - [ ] Update the checked AGENTS.yml schemas to reject preload-only fields under `pi-tree` and represent both sections' empty and explicit forms.
+  - [ ] Update the existing AGENTS.yml authoring skill with the separate defaults, extends requirements, include replacement rule, exclude precedence, local Git-ignore behavior, and external tree-prefix rule.
+  - [ ] Add existing-suite validation that generated project configuration contains both direct sections and parses through their public schemas.
+
+- [ ] Validate, publish, and activate the merged implementation
   - [ ] Run typecheck, Biome, and all existing tests in `pi-agents-yaml`, `pi-preload`, and `pi-tree`.
-  - [ ] Run clean development installs, clean production installs, package dry runs, and credential-free production extension-load checks for both extensions.
-  - [ ] Verify fresh trusted sessions in the meta repository and `self-system` produce scoped preload content and complete bounded trees with no generated, task, cache, or secret paths.
-  - [ ] Push `pi-agents-yaml` first, update dependent locks to its reviewed revision, then commit and push `pi-preload`, `pi-tree`, and configuration repositories without unrelated changes.
-  - [ ] Run `pi update --extensions` and confirm the installed extensions load the pushed revisions.
+  - [ ] Run clean full installs, clean production installs, package dry runs, and credential-free production extension-load checks for both extensions.
+  - [ ] Verify fresh trusted sessions in `pi-extensions`, `self-system`, and one large application produce the configured preload content and one bounded tree without Git-ignored, default-excluded, or configured-excluded paths.
+  - [ ] Push `pi-agents-yaml` first, update dependent locks to its reviewed revision, then commit and push `pi-preload`, `pi-tree`, and each configuration repository without unrelated changes.
+  - [ ] Run `pi update --extensions` and confirm the installed `pi-preload` and `pi-tree` load the pushed revisions.

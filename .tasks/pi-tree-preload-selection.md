@@ -4,31 +4,31 @@ Make `pi-agents-yaml` the authoritative AGENTS.yml configuration system so exten
 
 ## Work units
 
-- [ ] Make `pi-agents-yaml` own the complete public contracts for both sections
-  - [ ] Keep `PiPreloadConfigurationSchema` strict with `contexts`, `excludes`, `extends`, `includes`, `presets`, and `signatures`, and add a strict `PiTreeConfigurationSchema` with only `excludes`, `extends`, and `includes`.
-  - [ ] Encode complete section defaults in `pi-agents-yaml`: missing or empty `pi-preload` selects no content, missing or empty `pi-tree` uses `includes: ["**/*"]`, `pi-tree.includes: []` selects no paths, and explicit tree includes replace the default glob.
-  - [ ] Set package-owned preload excludes to `.git`, `.git/**`, `**/AGENTS.yml`, `**/.tasks`, `**/.tasks/**`, `PRELOAD.md`, `TREE.txt`, and the existing dependency lock-file patterns.
-  - [ ] Set package-owned tree excludes to `.git`, `.git/**`, `**/AGENTS.yml`, `**/.tasks`, `**/.tasks/**`, `**/.pi/readcache/**`, `**/.pi/tmp/**`, `PRELOAD.md`, and `TREE.txt` while retaining other lock files, tests, manifests, and tracked configuration names.
-  - [ ] Move the `pi-extension` and `dioxus-rust` preset definitions into the `pi-agents-yaml` package so its preload resolver owns preset loading and validation.
+- [x] Make `pi-agents-yaml` own the complete public contracts for both sections
+  - [x] Keep `PiPreloadConfigurationSchema` strict with `contexts`, `excludes`, `extends`, `includes`, `presets`, and `signatures`, and add a strict `PiTreeConfigurationSchema` with only `excludes`, `extends`, and `includes`.
+  - [x] Encode complete section defaults in `pi-agents-yaml`: missing or empty `pi-preload` selects no content, missing or empty `pi-tree` uses `includes: ["**/*"]`, `pi-tree.includes: []` selects no paths, and explicit tree includes replace the default glob.
+  - [x] Set package-owned preload excludes to `.git`, `.git/**`, `**/AGENTS.yml`, `**/.tasks`, `**/.tasks/**`, `PRELOAD.md`, `TREE.txt`, and the existing dependency lock-file patterns.
+  - [x] Set package-owned tree excludes to `.git`, `.git/**`, `**/AGENTS.yml`, `**/.tasks`, `**/.tasks/**`, `**/.pi/readcache/**`, `**/.pi/tmp/**`, `PRELOAD.md`, and `TREE.txt` while retaining other lock files, tests, manifests, and tracked configuration names.
+  - [x] Move the `pi-extension` and `dioxus-rust` preset definitions into the `pi-agents-yaml` package so its preload resolver owns preset loading and validation.
 
-- [ ] Provide resolved section APIs instead of consumer-side configuration orchestration
-  - [ ] Add public `resolvePiPreloadGraph` and `resolvePiTreeGraph` functions that load their named sections, apply package-owned defaults for missing sections and fields, and return typed resolved graph nodes.
-  - [ ] Keep shared canonical path resolution, ordering, cycle detection, cancellation, and repository-relative extends inside the existing generic graph implementation.
-  - [ ] Make `resolvePiPreloadGraph` expand and validate presets on every node before following that node's extends, and make `resolvePiTreeGraph` reject preload-only fields without reading preload configuration.
-  - [ ] Apply the requested section's defaults when an explicit extends target lacks that section, with no fallback to another section.
-  - [ ] Make shared file selection consume the already-defaulted graph values, merge configured excludes after package defaults, and keep excludes authoritative over all selected paths.
+- [x] Provide resolved section APIs instead of consumer-side configuration orchestration
+  - [x] Add public `resolvePiPreloadGraph` and `resolvePiTreeGraph` functions that load their named sections, apply package-owned defaults for missing sections and fields, and return typed resolved graph nodes.
+  - [x] Keep shared canonical path resolution, ordering, cycle detection, cancellation, and repository-relative extends inside the existing generic graph implementation.
+  - [x] Make `resolvePiPreloadGraph` expand and validate presets on every node before following that node's extends, and make `resolvePiTreeGraph` reject preload-only fields without reading preload configuration.
+  - [x] Apply the requested section's defaults when an explicit extends target lacks that section, with no fallback to another section.
+  - [x] Make shared file selection consume the already-defaulted graph values, merge configured excludes after package defaults, and keep excludes authoritative over all selected paths.
 
-- [ ] Lock package-owned defaults and resolved APIs with focused `pi-agents-yaml` tests
-  - [ ] Add fixtures with different `pi-preload` and `pi-tree` sections and prove that each public resolver reads only its owned section.
-  - [ ] Cover missing sections, empty sections, omitted fields, explicit empty includes, explicit includes, package defaults, and configured excludes for both resolvers.
-  - [ ] Verify package-owned per-node preload preset expansion, repository-relative extends, repository-local `.gitignore`, parent-ignored child repositories, exclude precedence, stable ordering, duplicate suppression, symbolic-link rejection, cancellation, and cycle errors.
-  - [ ] Verify that an explicit extends target without the requested section receives that section's package defaults without disappearing or falling back to another section.
-  - [ ] Verify that root and nested AGENTS.yml files and `.tasks` directories cannot enter either resolved selection.
+- [x] Lock package-owned defaults and resolved APIs with focused `pi-agents-yaml` tests
+  - [x] Add fixtures with different `pi-preload` and `pi-tree` sections and prove that each public resolver reads only its owned section.
+  - [x] Cover missing sections, empty sections, omitted fields, explicit empty includes, explicit includes, package defaults, and configured excludes for both resolvers.
+  - [x] Verify package-owned per-node preload preset expansion, repository-relative extends, repository-local `.gitignore`, parent-ignored child repositories, exclude precedence, stable ordering, duplicate suppression, symbolic-link rejection, cancellation, and cycle errors.
+  - [x] Verify that an explicit extends target without the requested section receives that section's package defaults without disappearing or falling back to another section.
+  - [x] Verify that root and nested AGENTS.yml files and `.tasks` directories cannot enter either resolved selection.
 
 - [ ] Reduce `pi-preload` to a resolved-configuration consumer
-  - [ ] Replace direct section loading, schema selection, preset-directory ownership, and graph assembly in `pi-preload/src/index.ts` with `resolvePiPreloadGraph` from `pi-agents-yaml`.
-  - [ ] Consume the resolved preload nodes for context rendering and file selection without applying additional configuration defaults in `pi-preload`.
-  - [ ] Preserve signature folding, repository mapping, binary handling, content ordering, file and total byte limits, `PRELOAD.md` output, and one hidden preload message per session.
+  - [x] Replace direct section loading, schema selection, preset-directory ownership, and graph assembly in `pi-preload/src/index.ts` with `resolvePiPreloadGraph` from `pi-agents-yaml`.
+  - [x] Consume the resolved preload nodes for context rendering and file selection without applying additional configuration defaults in `pi-preload`.
+  - [x] Preserve signature folding, repository mapping, binary handling, content ordering, file and total byte limits, `PRELOAD.md` output, and one hidden preload message per session.
   - [ ] Update existing `pi-preload` tests to prove identical configured output and package-owned missing-section behavior.
   - [ ] Remove migrated preset files and unused configuration imports from `pi-preload`, and include the preset files in the published `pi-agents-yaml` package.
 

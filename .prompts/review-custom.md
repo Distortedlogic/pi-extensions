@@ -75,10 +75,6 @@ B. Unverified possibilities
 - State the missing parity evidence.
 - Do not recommend implementation yet.
 
-C. Custom code that must remain
-
-- Explain the required behavior that no demonstrated replacement covers.
-
 Do not propose feature removal.  
  Do not provide broad architectural rewrites.  
  Do not make edits.  

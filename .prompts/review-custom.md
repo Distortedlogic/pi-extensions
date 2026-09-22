@@ -2,7 +2,7 @@
 
 Review the supplied repository context for custom implementations and orchestration that duplicate an idiomatic native feature, the standard library, an existing dependency, or a maintained third-party package.
 
-This is a behavior-preserving simplification review. It is not a feature-removal review.
+This is a behavior-preserving simplification review. It is not a feature-removal review. Before classifying findings, identify every substantial custom implementation and orchestration, analyze the largest first, and include each. Lack of a complete replacement is not grounds for omission or superficial treatment.
 
 Primary rules:
 

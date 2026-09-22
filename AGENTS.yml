@@ -1,6 +1,4 @@
 pi-preload:
-  excludes:
-    - ".tasks"
   presets:
     - "pi-extension"
   extends:
@@ -20,3 +18,24 @@ pi-preload:
     - "package.json"
     - "copier.yml"
     - "template/**/*"
+
+pi-tree:
+  extends:
+    - "./pi-agents-yaml"
+    - "./pi-blend"
+    - "./pi-compress"
+    - "./pi-cron"
+    - "./pi-env"
+    - "./pi-modes"
+    - "./pi-preload"
+    - "./pi-prompts"
+    - "./pi-steering"
+    - "./pi-sync"
+    - "./pi-tasks"
+    - "./pi-tree"
+  includes:
+    - "package.json"
+    - "copier.yml"
+    - "template/**/*"
+    - ".prompts/**/*"
+    - "skills/**/*"

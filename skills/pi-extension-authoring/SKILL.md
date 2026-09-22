@@ -1,136 +1,114 @@
 ---
-name: pi-extension-authoring
-description: Use when creating a new local Pi extension. Do not use when editing an existing extension or doing Git-only work.
+name: agents-yml-authoring
+description: Create or improve AGENTS.yml for the current folder after inspecting its actual structure and available Pi configuration.
 ---
 
-# Local Pi extension conventions
+# Author AGENTS.yml
 
-Use Pi documentation for normal extension APIs and TypeScript knowledge. This skill contains only local decisions and lessons.
+Create a minimal `AGENTS.yml` for the current working directory. Do not assume a language, framework, package type, or repository layout.
 
-## Repository and package baseline
+`AGENTS.yml` is configuration for Pi packages. `AGENTS.md` contains agent instructions. Do not put prose instructions in `AGENTS.yml`.
 
-- Put standalone extension repositories in `~/repos/`.
-- Use Forgejo as the writable primary remote with the name `origin`.
-- Use the `Distortedlogic` GitHub owner for the mirror remote with the name `github`.
-- Create new extension repositories as private unless the user specifies another visibility.
-- Use Git package sources in this form: `git:github.com/Distortedlogic/<repository>`.
-- Use `@earendil-works/pi-coding-agent`, not the upstream package name.
-- Declare every directly imported runtime package. Do not rely on a peer package's transitive dependencies.
-- Do not add `@earendil-works/pi-tui` unless source code imports TUI components directly. `ctx.ui` does not require a direct TUI dependency.
-- Do not add Vite or a build step for a normal Pi extension.
-- Use `src/index.ts` as the extension entry.
-- Use Node `>=22.19.0`, TypeScript `~7.0.2`, Node 22 type definitions, Biome `^2.5.14`, and Pi peer dependencies `>=0.85.1 <1` from the Copier baseline.
-- Keep the generated `.gitignore`. Commit `package-lock.json` after `npm install`.
+## Inspect first
 
-The Copier template at the meta-package root is the only source for every new extension repository. Resolve the package root from this skill file (`../..`) and use that directory as the Copier source. Do not copy a baseline manually or use another repository.
+Read the applicable `AGENTS.md` instructions and the existing `AGENTS.yml`, if present.
 
-When you create an extension repository:
+Inspect the current folder before selecting files:
 
-1. Set the target directory under `~/repos/`, and create it if it does not exist.
-2. Confirm that the target directory contains no files or directories, including hidden entries. Stop if it is not empty.
-3. Derive the package name from the final target directory name.
-4. Resolve the meta-package root from this skill file (`../..`). Apply it with `copier copy <meta-package-root> <target-directory>`. Give Copier the derived package name and the short project description.
-5. Initialize the target as a Git repository with the `main` branch. In the target directory, run `pre-commit install --install-hooks --hook-type pre-commit --hook-type pre-push`.
-6. Add only the dependencies that the source and checks require. Run `npm install` to create `package-lock.json`.
-7. Implement the extension in `src/`.
-8. Replace the template-only unit and end-to-end tests with tests for the extension behavior.
-9. Run all configured checks:
+```bash
+pwd
+tree -a -L 2 --dirsfirst -I '.git|node_modules'
+```
 
-   ```bash
-   pre-commit run --all-files
-   npm run check
-   PI_OFFLINE=1 npm run test:e2e
-   ```
+Run a deeper, targeted tree for directories that need more inspection:
 
-10. Create the private Forgejo repository and the private GitHub mirror. Add Forgejo as `origin` and GitHub as `github`:
+```bash
+tree -a -L 4 --dirsfirst <relevant-directory>
+```
 
-    ```bash
-    git remote add origin <forgejo-ssh-url>
-    git remote add github git@github.com:Distortedlogic/<repository>.git
-    ```
+Read the manifests, entry points, schemas, configuration, and tests that explain the folder. Check file sizes before fully preloading large trees.
 
-11. Commit the validated files. Push `main` to Forgejo first, and then push the same commit to GitHub:
+## Document rules
 
-    ```bash
-    git push -u origin main
-    git push github main
-    ```
+- The YAML root must be one mapping.
+- Preserve top-level sections owned by other Pi packages.
+- Edit only the section needed for the request.
+- Do not invent fields.
+- Quote globs and cron expressions.
+- Paths are relative to the directory that contains `AGENTS.yml`.
+- Project `AGENTS.yml` is loaded only for a trusted project.
 
-Put all runtime TypeScript files in `src/`. Start with only `src/index.ts`. Add another file only for a clear function, and name it for that function. Keep Pi registration in `src/index.ts`. Do not add empty modules or general `utils.ts`, `helpers.ts`, or `common.ts` files.
+## pi-preload
 
-Install and run local package tools through npm scripts. Do not guess a CLI path in `~/3rd/pi`.
-
-## Preload manifest
-
-Use this generated top-level `pi-preload` baseline:
+The supported fields are:
 
 ```yaml
 pi-preload:
-  presets:
-    - "pi-extension"
-  includes:
-    - "src/**/*.ts"
-    - "package.json"
+  presets: []
+  contexts: []
+  extends: []
+  includes: []
+  signatures: []
+  excludes: []
 ```
 
-It preloads runtime TypeScript, package metadata, and the common Pi extension references. It intentionally does not preload `README.md`, test TypeScript files, or lock files. Add only source and Pi files needed by that extension. Do not preload lock files.
+Use only fields that are needed.
 
-## Non-obvious Pi behavior
+- `includes`: Load complete file contents.
+- `signatures`: Keep source structure and declarations while folding function bodies.
+- `excludes`: Remove paths from file selection.
+- `presets`: Apply a known packaged preload configuration.
+- `contexts`: Render a known packaged context provider.
+- `extends`: Load another directory's `AGENTS.yml` as a separate source root.
 
-- Pi loads TypeScript extensions with `jiti`. A raw Node import is not a valid Pi load test.
-- For active-run steering, use `pi.sendMessage(..., { deliverAs: "steer" })` and do not set `triggerTurn: false`.
-- `triggerTurn: false` during streaming creates a passive custom message that Pi defers until the current turn ends.
-- `message_start` with role `user` is the established reset boundary for counters that run between user messages. A custom message does not reset that counter.
-- `tool_execution_start` is the established ordered counter event for tool-call nudges, including parallel tool batches.
-- A `session_start` preload guard must check for that extension's own custom message. It must not skip because any unrelated context entry exists.
-- `Value.Decode()` does not validate a normal TypeBox schema. Use `Value.Parse()` when parsing must validate.
-- An extension handler throw reaches Pi's extension runner. An import error happens before a handler exists.
-- Use `ctx.isProjectTrusted()` before reading a project-owned file.
-- After session replacement or reload, captured session-bound `pi` and `ctx` objects are stale.
+Before using a preset or context, inspect the installed `pi-preload` `presets/` or `context/` directory. Do not invent names.
 
-## Local test pattern
+An `extends` value must point to a directory with an `AGENTS.yml`. Paths in that file are relative to that directory. Circular references are invalid.
 
-The template creates separate unit and end-to-end test files. Update these existing files for the requested behavior.
+## File selection
 
-- Unit tests cover pure parsing, counters, ordering, reset rules, limits, and errors.
-- The template end-to-end test verifies that Pi can load the extension without an LLM request.
-- Behavior tests use the exported `RpcClient` with `--no-extensions` and one explicit `--extension` path.
-- Add `--no-session` unless persistence is under test.
-- Add `--approve` only for trusted-project behavior.
-- Set `PI_OFFLINE=1`.
-- Inspect RPC messages, entries, state, queues, or command results. Do not ask a model whether hidden context exists.
-- A Pi RPC test must not make an LLM request when state inspection can prove the behavior.
+Select the smallest set that gives useful recurring context:
 
-## Secrets
+- manifests and central configuration;
+- public interfaces and schemas;
+- important entry points;
+- focused source files;
+- tests that define expected behavior.
 
-Load the `bitwarden-secrets` skill for any secret or `.env` work. Do not duplicate that workflow here.
+Use `signatures` for large supported source files. Full inclusion wins when one file matches both `includes` and `signatures`.
 
-## Release sequence
+Avoid `"**/*"`. It can load unrelated and private files.
 
-For a new private extension:
+Never select:
 
-1. Run the local `check` script.
-2. Verify the requested behavior through Pi or a focused non-persistent check.
-3. Commit with a short message.
-4. Create and push `Distortedlogic/<repository>` as private.
-5. Install `git:github.com/Distortedlogic/<repository>`.
-6. Reload or restart Pi.
+- `.env` or credentials;
+- authentication files;
+- dependency directories;
+- generated output;
+- caches;
+- large artifacts;
+- session data.
 
-For an installed extension update:
+`.gitignore` affects project file selection. Symlinks are not followed. Common lock files, `.git`, `PRELOAD.md`, and `TREE.txt` are already excluded.
 
-1. Start with a clean worktree. Keep existing behavior changes out of the template update.
-2. When a template update is requested, run `copier update`. If the request names a template revision, run `copier update --vcs-ref <template-ref>`.
-3. Review the complete three-way diff. Resolve each Copier conflict, and review the result with `git diff`.
-4. Run `pre-commit autoupdate` only when the requested update includes hook revisions. Review those revision changes with the template changes.
-5. Run all configured checks:
+Signature folding supports the languages provided by the installed `pi-preload` package. Current built-in support includes JavaScript, TypeScript, Python, Rust, and Go. Use full inclusion or narrower patterns for unsupported files.
 
-   ```bash
-   pre-commit run --all-files
-   npm run check
-   PI_OFFLINE=1 npm run test:e2e
-   ```
+Selected text blocks must stay below the preload block limit, and total generated context must stay below the combined context limit. Keep individual inputs well below 256 KiB and total output below 2 MiB.
 
-6. Commit template changes separately from extension behavior changes when practical.
-7. Push the validated commits to Forgejo first, and then update the GitHub mirror.
-8. Run `pi install` with the same Git source.
-9. Reload or restart Pi.
+Images can be included when they are useful. Other binary files are rejected.
+
+## Other sections
+
+Do not infer `pi-prompts`, `pi-modes`, `cron`, or another package section from the repository tree. Add one only when the user requests that feature, and inspect the owning package's current schema first.
+
+## Validate
+
+After writing the file:
+
+1. Re-read `AGENTS.yml`.
+2. Confirm that every pattern matches the inspected tree.
+3. Confirm that no secret, generated file, or unrelated directory can match.
+4. Reload Pi or start a new session.
+5. Inspect generated `PRELOAD.md` and `TREE.txt` when their extensions are active.
+6. Confirm that the selected context is useful, complete enough, and within limits.
+7. Do not edit or commit generated `PRELOAD.md` or `TREE.txt`.

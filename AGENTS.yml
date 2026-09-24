@@ -29,3 +29,9 @@ pi-tree:
     - "./pi-sync"
     - "./pi-tasks"
     - "./pi-tree"
+  includes:
+    - "package.json"
+    - "copier.yml"
+    - "template/**/*"
+    - ".prompts/**/*"
+    - "skills/**/*"

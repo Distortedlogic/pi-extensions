@@ -14,10 +14,6 @@ pi-preload:
     - "./pi-sync"
     - "./pi-tasks"
     - "./pi-tree"
-  includes:
-    - "package.json"
-    - "copier.yml"
-    - "template/**/*"
 
 pi-tree:
   extends:
@@ -33,9 +29,3 @@ pi-tree:
     - "./pi-sync"
     - "./pi-tasks"
     - "./pi-tree"
-  includes:
-    - "package.json"
-    - "copier.yml"
-    - "template/**/*"
-    - ".prompts/**/*"
-    - "skills/**/*"

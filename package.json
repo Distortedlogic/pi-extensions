@@ -21,6 +21,6 @@
     "skills": []
   },
   "dependencies": {
-    "pi-agents-yaml": "github:Distortedlogic/pi-agents-yaml#4138b0e65da8b10db5d2403977c9b7a894d1db02"
+    "pi-agents-yaml": "github:Distortedlogic/pi-agents-yaml#0f45dc756c0597fe90ae5deb45a1077d46bc667b"
   }
 }

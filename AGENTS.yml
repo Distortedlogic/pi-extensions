@@ -25,6 +25,7 @@ pi-tree:
     - "./pi-modes"
     - "./pi-preload"
     - "./pi-prompts"
+    - "./pi-read-signatures"
     - "./pi-steering"
     - "./pi-sync"
     - "./pi-tasks"

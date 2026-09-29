@@ -10,6 +10,9 @@
   "engines": {
     "node": ">=22.19.0"
   },
+  "scripts": {
+    "test": "node --test test/template.test.mjs"
+  },
   "files": [
     ".prompts",
     "skills",

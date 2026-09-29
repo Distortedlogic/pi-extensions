@@ -22,16 +22,12 @@ test("packs and loads the production package in Pi without provider credentials"
 
 	const npm = process.platform === "win32" ? "npm.cmd" : "npm";
 	const environment = process.env;
-	const { stdout: packOutput } = await execFileAsync(
-		npm,
-		["pack", "--json", "--pack-destination", archiveDirectory],
-		{
-			cwd: projectDirectory,
-			encoding: "utf8",
-			env: environment,
-			timeout: 30_000,
-		},
-	);
+	const { stdout: packOutput } = await execFileAsync(npm, ["pack", "--json", "--pack-destination", archiveDirectory], {
+		cwd: projectDirectory,
+		encoding: "utf8",
+		env: environment,
+		timeout: 30_000,
+	});
 	const packed = (JSON.parse(packOutput) as Array<{ filename?: unknown; name?: unknown }>)[0];
 	if (!packed || typeof packed.filename !== "string" || typeof packed.name !== "string") {
 		assert.fail("npm pack returned no package name or archive filename");
@@ -57,21 +53,15 @@ test("packs and loads the production package in Pi without provider credentials"
 
 	const { stderr } = await execFileAsync(
 		process.execPath,
-		[
-			cliPath,
-			"--no-session",
-			"--no-extensions",
-			"--extension",
-			installedPackageDirectory,
-			"--list-models",
-		],
+		[cliPath, "--no-session", "--no-extensions", "--extension", installedPackageDirectory, "--list-models"],
 		{
 			cwd: installDirectory,
 			encoding: "utf8",
 			env: {
-				...environment,
+				HOME: agentDirectory,
 				PI_CODING_AGENT_DIR: agentDirectory,
 				PI_OFFLINE: "1",
+				USERPROFILE: agentDirectory,
 			},
 			timeout: 30_000,
 		},

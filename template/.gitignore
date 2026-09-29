@@ -1,6 +1,0 @@
-.env
-node_modules/
-*.tgz
-coverage/
-PRELOAD.md
-TREE.txt

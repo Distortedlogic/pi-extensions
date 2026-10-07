@@ -21,11 +21,10 @@ test("packs and loads the production package in Pi without provider credentials"
 	await Promise.all([mkdir(archiveDirectory), mkdir(installDirectory), mkdir(agentDirectory)]);
 
 	const npm = process.platform === "win32" ? "npm.cmd" : "npm";
-	const environment = process.env;
 	const { stdout: packOutput } = await execFileAsync(npm, ["pack", "--json", "--pack-destination", archiveDirectory], {
 		cwd: projectDirectory,
 		encoding: "utf8",
-		env: environment,
+		env: process.env,
 		timeout: 30_000,
 	});
 	const packed = (JSON.parse(packOutput) as Array<{ filename?: unknown; name?: unknown }>)[0];
@@ -40,7 +39,7 @@ test("packs and loads the production package in Pi without provider credentials"
 		{
 			cwd: installDirectory,
 			encoding: "utf8",
-			env: environment,
+			env: process.env,
 			timeout: 60_000,
 		},
 	);

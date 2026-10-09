@@ -1,35 +1,29 @@
 # Goal
 
-Replace the task-list prompt chain with a `/tasks create` flow that uses the full role-labeled active conversation, uses JEV to decide whether user clarification or focused agent review is necessary, validates task-list structure in code, repeats only selected review work, and loads the accepted task list without starting execution.
+Replace the task-list prompt chain with a `/tasks create` flow that uses the full role-labeled active conversation, has the agent write and submit one task list, validates its structure in code, uses JEV only after submission to decide which review questions the agent needs, repeats only selected review work, and stops without loading or running the finished list.
 
 ## Work units
 
-- [ ] Add the JEV task-list decisions
+- [ ] Add post-submission JEV question selection
   - [ ] Add `@typesafe-ai/sdk` as an exact pinned runtime dependency and update `package-lock.json`.
-  - [ ] Build JEV state from the full active session projection while preserving message roles and order, treating user messages as requirements and assistant or tool messages as evidence.
-  - [ ] Add a pre-creation `ask` or `skip` decision for whether the agent must ask the user to identify one concrete implementation result.
-  - [ ] Add post-creation `ask` or `skip` decisions for goal conflict, missing required work, unsupported work, and concrete execution or dependency problems.
-  - [ ] Make cancellation, missing credentials, timeout, and JEV errors stop the flow without a fallback review prompt.
+  - [ ] Build JEV state from the full role-labeled active conversation and exact submitted Markdown, treating user messages as requirements and assistant or tool messages as evidence.
+  - [ ] Add independent `ask` or `skip` decisions for goal conflict, missing required work, unsupported work, and concrete execution or dependency problems.
+  - [ ] Make missing credentials, cancellation, timeout, and JEV errors stop the sequence without a fallback review prompt.
 
-- [ ] Add the session-local creation sequence
-  - [ ] Track idle, clarification, drafting, and review phases together with the submitted filename, file revision, and selected review question identifiers.
-  - [ ] Reset creation state on session start, branch changes, shutdown, successful loading, and explicit cancellation.
-  - [ ] Resume the sequence after a user clarification without extracting or generating a separate request string.
-  - [ ] Stop the sequence when an unchanged file revision produces the same selected review questions.
+- [ ] Add `/tasks create` with minimal in-flight context
+  - [ ] Extend the `/tasks` command parser and handler with a no-argument `create` action.
+  - [ ] Retain only the captured active conversation and the last submitted revision with its selected question identifiers while creation is active.
+  - [ ] Send one instruction that tells the agent to write one `.tasks/<description>.md` file with the required hierarchy and call `submit_task_list` with only its filename.
+  - [ ] Reject another `/tasks create` call while creation is active and clear the retained context when the session changes or the sequence ends.
 
-- [ ] Add `/tasks create`
-  - [ ] Extend the `/tasks` command parser and command handler with a no-argument `create` action.
-  - [ ] Capture the active conversation before sending any task-list instruction and reject a second concurrent creation sequence.
-  - [ ] Run the pre-creation JEV decision and ask the agent for one concise user clarification only when JEV selects it.
-  - [ ] When creation is ready, instruct the agent to write one `.tasks/<description>.md` file with the required hierarchy and call `submit_task_list` with only its filename.
-
-- [ ] Add task-list submission and focused review
-  - [ ] Register `submit_task_list` with a filename-only schema and load the submitted file through the existing task-list path validation.
+- [ ] Add task-list submission and targeted review
+  - [ ] Register `submit_task_list` with a filename-only schema and read the submitted file through the existing task-list path validation.
   - [ ] Return `parseTaskList()` failures directly to the agent before making a JEV call.
-  - [ ] Run the post-creation JEV decisions with the active conversation and exact submitted Markdown.
-  - [ ] End the current turn and send one follow-up prompt containing only the JEV-selected review questions, requiring exact conversation and task-list citations before edits.
-  - [ ] Let the reviewing agent ask the user when a selected issue requires a user decision, then resume review after the answer.
-  - [ ] When JEV selects no review questions, load the final file into the existing task store, clear creation state, and leave the run idle.
+  - [ ] Run the JEV decisions with the retained conversation and exact submitted Markdown.
+  - [ ] When JEV selects questions, end the current turn and send one follow-up containing only those questions, requiring exact conversation and task-list citations before edits.
+  - [ ] Let the agent use the normal conversation to request user input when a selected question cannot be resolved from available evidence, then submit the edited list again.
+  - [ ] When JEV selects no questions, clear the retained context, report the finished path, and leave loading and execution to the existing `/tasks load` and `/tasks run` commands.
+  - [ ] Stop instead of sending another follow-up when an unchanged revision produces the same selected questions.
 
 - [ ] Remove the prompt-chain task-list builder
   - [ ] Delete `.prompts/create-tasklist.md`, `.prompts/review-tasklist.md`, and `.prompts/review-tasklist-goal.md`.
@@ -38,6 +32,6 @@ Replace the task-list prompt chain with a `/tasks create` flow that uses the ful
 
 - [ ] Update the existing tests and validate the package
   - [ ] Add an injected fake JEV judge to the existing test infrastructure without real model calls.
-  - [ ] Test pre-creation clarification, direct creation, parser failure, selected review, user clarification, unchanged revision handling, successful automatic loading, and JEV failure.
-  - [ ] Test that JEV receives the complete role-labeled active conversation without a synthetic request extraction step.
+  - [ ] Test command startup, parser failure, selected review questions, no-question completion, unchanged submission handling, and JEV failure.
+  - [ ] Test that JEV receives the complete role-labeled active conversation without a synthetic request and that completion does not load or run the list.
   - [ ] Run type checking, linting, the existing test suite, clean full and production installs, and a production extension-load check.

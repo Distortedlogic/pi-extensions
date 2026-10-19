@@ -14,7 +14,6 @@
     "test": "node --test test/template.test.mjs"
   },
   "files": [
-    ".prompts",
     "skills",
     "template",
     "copier.yml",
@@ -22,8 +21,5 @@
   ],
   "pi": {
     "skills": []
-  },
-  "dependencies": {
-    "pi-agents-yaml": "github:Distortedlogic/pi-agents-yaml#a43c4fe032c956132e4649ce0f7e991d700af4c6"
   }
 }
